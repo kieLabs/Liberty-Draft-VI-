@@ -3,21 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Leonida Vice Drift VI: Gamerkie Edition</title>
+  <title>Liberty Drift IV: Gamerkie Edition</title>
   <style>
     :root {
-      --bg: #080712;
-      --panel: rgba(14, 11, 28, 0.86);
-      --border: rgba(255, 255, 255, 0.16);
-      --pink: #ff4ecd;
-      --cyan: #00f5d4;
-      --gold: #ffbe0b;
-      --crimson: #ff2a5f;
-      --text: #f8fafc;
-      --muted: #cbd5e1;
+      --bg: #07090e;
+      --panel: rgba(10, 14, 22, 0.85);
+      --border: rgba(255, 255, 255, 0.14);
+      --cyan: #2de2e6;
+      --amber: #f7b731;
+      --crimson: #ff3b5c;
+      --green: #2ecc71;
+      --armor: #38bdf8;
+      --text: #eef2f7;
+      --muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     html, body {
       margin: 0;
@@ -28,18 +32,18 @@
       overscroll-behavior: none;
       background: var(--bg);
       color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
       user-select: none;
       -webkit-user-select: none;
     }
 
     #game-wrap {
       position: relative;
-      width: 100%;
-      height: 100%;
-      min-height: 320px;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
-      background: #081224;
+      background: #07090e;
     }
 
     canvas#game {
@@ -51,6 +55,7 @@
       cursor: crosshair;
     }
 
+    /* HUD Layer */
     #hud {
       position: absolute;
       inset: 0;
@@ -66,7 +71,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
     }
 
@@ -86,23 +91,33 @@
       padding: 6px 10px;
       font-size: 12px;
       font-weight: 700;
+      letter-spacing: 0.4px;
       cursor: pointer;
+      backdrop-filter: blur(6px);
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: transform 0.08s ease, border-color 0.15s ease;
+      transition: transform 0.08s ease, border-color 0.15s ease, background 0.15s ease;
     }
 
-    .pill-btn:hover { border-color: var(--pink); }
-    .pill-btn:active { transform: scale(0.95); }
+    .pill-btn:hover {
+      border-color: var(--cyan);
+      background: rgba(18, 25, 39, 0.94);
+    }
+
+    .pill-btn:active {
+      transform: scale(0.95);
+    }
+
     .pill-btn .kbd {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.12);
       padding: 1px 5px;
       border-radius: 4px;
       font-size: 10px;
       color: var(--cyan);
     }
 
+    /* Top-Right Status */
     .status-stack {
       display: flex;
       flex-direction: column;
@@ -113,12 +128,14 @@
 
     .cash-box {
       background: var(--panel);
-      border: 1px solid rgba(0, 245, 212, 0.45);
+      border: 1px solid rgba(46, 204, 113, 0.38);
       padding: 5px 12px;
       border-radius: 8px;
       font-size: 18px;
-      font-weight: 900;
-      color: var(--cyan);
+      font-weight: 800;
+      color: #4ade80;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
       font-variant-numeric: tabular-nums;
     }
 
@@ -131,10 +148,27 @@
       border-radius: 8px;
     }
 
-    .star { font-size: 16px; line-height: 1; color: rgba(255,255,255,0.18); }
-    .star.lit { color: var(--gold); text-shadow: 0 0 8px rgba(255, 190, 11, 0.85); }
-    .star.evading { animation: starBlink 0.45s infinite alternate; }
-    @keyframes starBlink { from { opacity: 1; } to { opacity: 0.3; } }
+    .star {
+      font-size: 16px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.18);
+      transition: color 0.15s ease, transform 0.15s ease;
+    }
+
+    .star.lit {
+      color: #facc15;
+      text-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+      transform: scale(1.08);
+    }
+
+    .star.evading {
+      animation: starBlink 0.5s infinite alternate;
+    }
+
+    @keyframes starBlink {
+      from { opacity: 1; color: #facc15; }
+      to { opacity: 0.35; color: #60a5fa; }
+    }
 
     .weapon-box {
       display: flex;
@@ -149,8 +183,12 @@
       cursor: pointer;
     }
 
-    .weapon-box .ammo { color: var(--pink); font-variant-numeric: tabular-nums; }
+    .weapon-box .ammo {
+      color: var(--amber);
+      font-variant-numeric: tabular-nums;
+    }
 
+    /* Info Strip */
     #info-strip {
       display: flex;
       flex-direction: column;
@@ -160,27 +198,34 @@
     }
 
     .badge-tag {
-      background: rgba(14, 11, 28, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(10, 14, 22, 0.74);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 3px 8px;
       border-radius: 6px;
       font-size: 11px;
       color: var(--muted);
+      letter-spacing: 0.4px;
     }
 
     #radio-toast {
-      background: rgba(14, 11, 28, 0.94);
-      border-left: 3px solid var(--pink);
+      background: rgba(10, 14, 22, 0.92);
+      border-left: 3px solid var(--cyan);
       padding: 5px 10px;
       border-radius: 4px;
       font-size: 12px;
       font-weight: 700;
-      color: var(--pink);
+      color: var(--cyan);
       opacity: 0;
-      transition: opacity 0.25s ease;
+      transform: translateY(-4px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
-    #radio-toast.show { opacity: 1; }
 
+    #radio-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Center Banners */
     #center-banners {
       position: absolute;
       top: 66px;
@@ -196,8 +241,8 @@
     }
 
     #mission-hud {
-      background: rgba(14, 11, 28, 0.88);
-      border: 1px solid rgba(255, 78, 205, 0.5);
+      background: rgba(10, 14, 22, 0.86);
+      border: 1px solid rgba(247, 183, 49, 0.45);
       padding: 6px 14px;
       border-radius: 8px;
       font-size: 12px;
@@ -210,13 +255,19 @@
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
-      text-shadow: 0 3px 16px rgba(0, 0, 0, 0.95), 0 0 18px rgba(255, 78, 205, 0.65);
+      color: #fff;
+      text-shadow: 0 3px 16px rgba(0, 0, 0, 0.95), 0 0 18px rgba(45, 226, 230, 0.5);
       opacity: 0;
       transform: scale(0.92);
       transition: opacity 0.28s ease, transform 0.28s ease;
     }
-    #big-banner.show { opacity: 1; transform: scale(1); }
 
+    #big-banner.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Bottom Row */
     .bottom-row {
       display: flex;
       justify-content: space-between;
@@ -233,17 +284,22 @@
     }
 
     #radar-box {
-      width: 140px;
-      height: 140px;
-      border-radius: 14px;
-      background: #081224;
-      border: 2px solid rgba(255, 78, 205, 0.45);
+      position: relative;
+      width: 146px;
+      height: 146px;
+      border-radius: 50%;
+      background: #0a0f18;
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.75);
+      border: 2px solid rgba(255, 255, 255, 0.16);
       overflow: hidden;
       flex-shrink: 0;
     }
 
-    canvas#radar { width: 100%; height: 100%; display: block; }
+    canvas#radar {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
 
     .vitals-col {
       display: flex;
@@ -253,14 +309,7 @@
       border: 1px solid var(--border);
       padding: 7px 10px;
       border-radius: 8px;
-      min-width: 122px;
-    }
-
-    .char-badge {
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.8px;
-      color: var(--pink);
+      min-width: 120px;
     }
 
     .bar-row {
@@ -274,118 +323,167 @@
     .bar-track {
       flex: 1;
       height: 7px;
-      background: rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
       overflow: hidden;
     }
-    .bar-fill { height: 100%; width: 100%; transition: width 0.1s linear; }
-    .bar-hp { background: linear-gradient(90deg, #10b981, #34d399); }
-    .bar-arm { background: linear-gradient(90deg, #06b6d4, #38bdf8); }
-    .bar-stam { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 
-    #speed-readout { font-size: 11px; font-weight: 800; color: var(--cyan); display: none; }
+    .bar-fill {
+      height: 100%;
+      width: 100%;
+      transition: width 0.12s linear;
+    }
+
+    .bar-hp { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .bar-arm { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+    .bar-stam { background: linear-gradient(90deg, #d97706, #fbbf24); }
+
+    #speed-readout {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--cyan);
+      letter-spacing: 0.6px;
+      display: none;
+      margin-top: 2px;
+    }
+
+    #cover-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 0.8px;
+      display: none;
+    }
+
+    .right-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      pointer-events: auto;
+    }
 
     #context-prompt {
-      pointer-events: auto;
-      background: rgba(14, 11, 28, 0.94);
+      background: rgba(10, 14, 22, 0.92);
       border: 1px solid var(--cyan);
       color: var(--text);
-      padding: 8px 13px;
+      padding: 7px 13px;
       border-radius: 8px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       display: none;
       cursor: pointer;
+      box-shadow: 0 4px 14px rgba(45, 226, 230, 0.25);
     }
-    #context-prompt.visible { display: inline-flex; align-items: center; }
 
-    /* Touch Controls */
-    #touch-controls { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 15; }
-    #touch-controls.active { display: block; }
+    #context-prompt.visible { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Touch Virtual Controls */
+    #touch-controls {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: none;
+      z-index: 15;
+    }
+
+    #touch-controls.active {
+      display: block;
+    }
 
     #joy-zone {
       position: absolute;
-      left: 18px;
-      bottom: 168px;
-      width: 116px;
-      height: 116px;
+      left: 20px;
+      bottom: 175px;
+      width: 124px;
+      height: 124px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      border: 2px solid rgba(255, 78, 205, 0.5);
+      background: rgba(255, 255, 255, 0.07);
+      border: 2px solid rgba(45, 226, 230, 0.35);
       pointer-events: auto;
       touch-action: none;
     }
+
     #joy-knob {
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 48px;
-      height: 48px;
-      margin-left: -24px;
-      margin-top: -24px;
+      width: 52px;
+      height: 52px;
+      margin-left: -26px;
+      margin-top: -26px;
       border-radius: 50%;
-      background: rgba(0, 245, 212, 0.65);
+      background: rgba(45, 226, 230, 0.55);
       border: 2px solid #fff;
+      box-shadow: 0 0 14px rgba(45, 226, 230, 0.6);
       pointer-events: none;
     }
 
     .touch-pad {
       position: absolute;
-      right: 14px;
-      bottom: 22px;
+      right: 16px;
+      bottom: 24px;
       display: grid;
-      grid-template-columns: repeat(2, 64px);
-      gap: 9px;
+      grid-template-columns: repeat(2, 68px);
+      gap: 10px;
       pointer-events: auto;
     }
 
     .t-btn {
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      background: rgba(14, 11, 28, 0.82);
-      border: 2px solid rgba(255,255,255,0.28);
+      background: rgba(12, 18, 30, 0.78);
+      border: 2px solid rgba(255, 255, 255, 0.25);
       color: #fff;
       font-size: 11px;
       font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       touch-action: none;
-      cursor: pointer;
+      user-select: none;
     }
-    .t-btn.primary { border-color: var(--pink); background: rgba(255, 78, 205, 0.26); }
-    .t-btn.drift { border-color: var(--gold); background: rgba(255, 190, 11, 0.24); }
-    .t-btn.car { border-color: var(--cyan); background: rgba(0, 245, 212, 0.22); }
-    .t-btn.pressed { transform: scale(0.92); filter: brightness(1.3); }
 
-    /* Modals */
+    .t-btn.primary { border-color: var(--crimson); background: rgba(255, 59, 92, 0.28); }
+    .t-btn.drift { border-color: var(--amber); background: rgba(247, 183, 49, 0.24); }
+    .t-btn.car { border-color: var(--cyan); background: rgba(45, 226, 230, 0.22); }
+    .t-btn:active, .t-btn.pressed { transform: scale(0.92); filter: brightness(1.3); }
+
+    /* Overlays */
     .overlay {
       position: absolute;
       inset: 0;
-      background: rgba(6, 5, 16, 0.78);
+      background: rgba(5, 8, 14, 0.76);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 30;
-      padding: 14px;
+      padding: 16px;
     }
+
     .overlay.hidden { display: none; }
 
     .modal-card {
-      background: linear-gradient(155deg, rgba(22, 16, 44, 0.97), rgba(10, 8, 20, 0.99));
-      border: 1px solid rgba(255, 78, 205, 0.5);
+      background: linear-gradient(160deg, rgba(16, 22, 34, 0.96), rgba(9, 12, 19, 0.98));
+      border: 1px solid rgba(45, 226, 230, 0.35);
       border-radius: 14px;
-      padding: 20px;
-      width: min(94vw, 580px);
+      padding: 22px;
+      width: min(94vw, 600px);
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.85);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.85);
     }
 
     .title-logo {
       font-size: clamp(26px, 5vw, 38px);
       font-weight: 900;
+      letter-spacing: 1.5px;
       margin: 0;
       line-height: 1.05;
-      background: linear-gradient(90deg, #ff4ecd, #ffbe0b, #00f5d4);
+      background: linear-gradient(90deg, #ffffff, #2de2e6, #f7b731);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-transform: uppercase;
@@ -393,8 +491,8 @@
 
     .subtitle {
       font-size: 12px;
-      font-weight: 800;
-      color: var(--cyan);
+      font-weight: 700;
+      color: var(--amber);
       letter-spacing: 2px;
       margin-top: 4px;
       text-transform: uppercase;
@@ -402,7 +500,7 @@
 
     .cta-btn {
       width: 100%;
-      padding: 13px 18px;
+      padding: 14px 20px;
       margin-top: 14px;
       border: none;
       border-radius: 10px;
@@ -410,55 +508,63 @@
       font-weight: 900;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: #080712;
-      background: linear-gradient(90deg, #ff4ecd, #00f5d4);
+      color: #07090e;
+      background: linear-gradient(90deg, #2de2e6, #4ade80);
       cursor: pointer;
+      box-shadow: 0 6px 22px rgba(45, 226, 230, 0.35);
+      transition: transform 0.1s ease, filter 0.15s ease;
     }
+
+    .cta-btn:hover { filter: brightness(1.08); }
+    .cta-btn:active { transform: scale(0.98); }
+
     .cta-btn.secondary {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       color: var(--text);
       border: 1px solid var(--border);
+      box-shadow: none;
       margin-top: 8px;
-      padding: 10px;
+      padding: 10px 14px;
       font-size: 13px;
     }
 
-    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     .stat-tile {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 8px 10px;
       font-size: 12px;
     }
-    .stat-tile strong { display: block; color: var(--cyan); font-size: 14px; margin-top: 2px; }
 
-    .controls-list {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.55;
-      margin-top: 10px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 11px;
+    .stat-tile strong {
+      display: block;
+      color: var(--cyan);
+      font-size: 14px;
+      margin-top: 2px;
     }
-    .controls-list b { color: #fff; }
 
     .shop-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
       padding: 8px 10px;
       border-radius: 8px;
       margin-top: 6px;
       font-size: 12px;
     }
+
     .shop-btn {
-      background: var(--gold);
-      color: #080712;
+      background: var(--amber);
+      color: #07090e;
       border: none;
       border-radius: 6px;
       padding: 5px 10px;
@@ -466,15 +572,59 @@
       font-size: 11px;
       cursor: pointer;
     }
-    .shop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .shop-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .controls-list {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .controls-list b { color: var(--text); }
+
+    .pause-map-wrap {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    canvas#pause-map {
+      width: 148px;
+      height: 148px;
+      border-radius: 8px;
+      border: 1px solid rgba(45, 226, 230, 0.4);
+      background: #07111c;
+      flex-shrink: 0;
+    }
+
+    #wasted-title {
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--crimson);
+      text-align: center;
+      margin: 0;
+      text-shadow: 0 0 24px rgba(255, 59, 92, 0.7);
+    }
 
     @media (max-width: 720px) {
-      #radar-box { width: 106px; height: 106px; }
+      #radar-box { width: 112px; height: 112px; }
       .vitals-col { min-width: 96px; padding: 5px 7px; }
       .pill-btn .kbd { display: none; }
-      #joy-zone { bottom: 132px; left: 12px; width: 102px; height: 102px; }
-      .touch-pad { grid-template-columns: repeat(2, 58px); right: 10px; bottom: 16px; }
-      .t-btn { width: 58px; height: 58px; font-size: 10px; }
+      #joy-zone { bottom: 142px; left: 14px; width: 108px; height: 108px; }
+      .touch-pad { grid-template-columns: repeat(2, 60px); right: 12px; bottom: 16px; }
+      .t-btn { width: 60px; height: 60px; font-size: 10px; }
     }
   </style>
 </head>
@@ -482,27 +632,27 @@
   <div id="game-wrap">
     <canvas id="game" tabindex="0"></canvas>
 
+    <!-- HUD -->
     <div id="hud">
       <div>
         <div class="hud-row">
           <div>
             <div class="hud-cluster">
-              <button class="pill-btn" id="btn-pause">PAUSE <span class="kbd">ESC</span></button>
-              <button class="pill-btn" id="btn-char">CHAR <span class="kbd">TAB</span></button>
-              <button class="pill-btn" id="btn-mission">MISSION <span class="kbd">M</span></button>
-              <button class="pill-btn" id="btn-radio">RADIO <span class="kbd">R</span></button>
-              <button class="pill-btn" id="btn-weapon">WEAP <span class="kbd">Q</span></button>
-              <button class="pill-btn" id="btn-reload">RELOAD <span class="kbd">G</span></button>
+              <button class="pill-btn" id="btn-pause" title="Pause / Map / Controls">PAUSE <span class="kbd">ESC</span></button>
+              <button class="pill-btn" id="btn-mission" title="Start or Cancel Contract">MISSION <span class="kbd">M</span></button>
+              <button class="pill-btn" id="btn-radio" title="Switch Radio Station">RADIO <span class="kbd">R</span></button>
+              <button class="pill-btn" id="btn-weapon" title="Cycle Weapon">WEAP <span class="kbd">Q</span></button>
+              <button class="pill-btn" id="btn-reload" title="Reload Weapon">RELOAD <span class="kbd">G</span></button>
             </div>
             <div id="info-strip">
-              <div class="badge-tag" id="world-badge">SUNSET • VICE BEACH • CLEAR</div>
-              <div id="radio-toast">RADIO: VICE WAVE 108.6</div>
+              <div class="badge-tag" id="world-badge">MIDNIGHT • STAR JUNCTION • RAIN</div>
+              <div id="radio-toast">RADIO: VLADIVOSTOK SYNTH</div>
             </div>
           </div>
 
           <div class="status-stack">
-            <div class="cash-box" id="hud-cash">$600</div>
-            <div class="stars-box" id="hud-stars">
+            <div class="cash-box" id="hud-cash">$500</div>
+            <div class="stars-box" id="hud-stars" aria-label="Wanted Level">
               <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
             </div>
             <div class="weapon-box" id="hud-weapon-box">
@@ -514,25 +664,31 @@
       </div>
 
       <div id="center-banners">
-        <div id="mission-hud">NO ACTIVE CONTRACT — PRESS [M] FOR LEONIDA JOB</div>
+        <div id="mission-hud">NO ACTIVE CONTRACT — PRESS [M] TO START</div>
         <div id="big-banner">CONTRACT PASSED</div>
       </div>
 
       <div class="bottom-row">
         <div class="radar-wrap">
-          <div id="radar-box"><canvas id="radar"></canvas></div>
+          <div id="radar-box">
+            <canvas id="radar"></canvas>
+          </div>
           <div class="vitals-col">
-            <div class="char-badge" id="char-name">LUCIA</div>
             <div class="bar-row"><span>HP</span><div class="bar-track"><div class="bar-fill bar-hp" id="bar-hp"></div></div></div>
             <div class="bar-row"><span>ARM</span><div class="bar-track"><div class="bar-fill bar-arm" id="bar-arm"></div></div></div>
             <div class="bar-row"><span>STM</span><div class="bar-track"><div class="bar-fill bar-stam" id="bar-stam"></div></div></div>
             <div id="speed-readout">0 MPH</div>
+            <div id="cover-tag">IN COVER (-45% DMG)</div>
           </div>
         </div>
-        <button id="context-prompt">[F] ENTER VEHICLE</button>
+
+        <div class="right-actions">
+          <button id="context-prompt">[F] ENTER VEHICLE</button>
+        </div>
       </div>
     </div>
 
+    <!-- Mobile / Touch Virtual Controls -->
     <div id="touch-controls">
       <div id="joy-zone"><div id="joy-knob"></div></div>
       <div class="touch-pad">
@@ -546,71 +702,87 @@
     <!-- Start Overlay -->
     <div class="overlay" id="start-screen">
       <div class="modal-card">
-        <h1 class="title-logo">Leonida Vice Drift VI</h1>
-        <div class="subtitle">Gamerkie Edition • Vice City &amp; Gloriana Keys</div>
-        <p style="font-size:13px; color:#e2e8f0; line-height:1.5; margin-top:10px;">
-          Cruise Ocean Drive, cross the Leonida Keys causeway bridges, switch between <b>Lucia</b> &amp; <b>Jason</b>, and outrun 5-star VCPD heat.
+        <h1 class="title-logo">Liberty Drift IV</h1>
+        <div class="subtitle">Gamerkie Edition • 2.5D Open World</div>
+        <p style="font-size:13px; color:#cbd5e1; line-height:1.5; margin-top:10px;">
+          Rain-slicked avenues, radial-extruded skyscrapers, harbor bridges, handbrake drifts, and five-star LCPD pursuits in pure HTML5 Canvas.
         </p>
         <div class="grid-2">
-          <div class="stat-tile"><span>Leonida Bankroll</span><strong id="start-cash">$600</strong></div>
+          <div class="stat-tile"><span>Saved Bankroll</span><strong id="start-cash">$500</strong></div>
           <div class="stat-tile"><span>Contracts Cleared</span><strong id="start-missions">0</strong></div>
         </div>
         <div class="controls-list">
           <b>Move / Drive:</b> WASD or Arrows &nbsp;|&nbsp; <b>Sprint:</b> Shift &nbsp;|&nbsp; <b>Aim &amp; Fire:</b> Mouse<br/>
-          <b>Switch Lucia/Jason:</b> Tab &nbsp;|&nbsp; <b>Enter / Hijack Car:</b> F or E &nbsp;|&nbsp; <b>Drift / Roll:</b> Space<br/>
-          <b>Weapons:</b> Q / 1-4 &nbsp;|&nbsp; <b>Reload:</b> G &nbsp;|&nbsp; <b>Radio:</b> R &nbsp;|&nbsp; <b>Contract:</b> M
+          <b>Hijack / Exit:</b> F or E &nbsp;|&nbsp; <b>Drift / Dodge:</b> Space &nbsp;|&nbsp; <b>Cover / Crouch:</b> C<br/>
+          <b>Weapons:</b> Q / 1-4 &nbsp;|&nbsp; <b>Reload:</b> G &nbsp;|&nbsp; <b>Radio:</b> R &nbsp;|&nbsp; <b>Mission:</b> M &nbsp;|&nbsp; <b>Horn / Lights:</b> H / L
         </div>
-        <button class="cta-btn" id="btn-play">PLAY VICE CITY</button>
+        <button class="cta-btn" id="btn-play">PLAY LIBERTY DRIFT IV</button>
       </div>
     </div>
 
-    <!-- Pause & Armory Modal -->
+    <!-- Pause / Map / Controls / Armory Modal -->
     <div class="overlay hidden" id="pause-modal">
       <div class="modal-card">
-        <h2 style="margin:0; font-size:21px; color:#ff4ecd;">PAUSE • LEONIDA MAP &amp; SHOP</h2>
+        <h2 style="margin:0; font-size:21px; color:#2de2e6; letter-spacing:1px;">PAUSE • CITY MAP &amp; ARMORY</h2>
         <div class="grid-2">
-          <div class="stat-tile"><span>Cash Balance</span><strong id="pause-cash">$600</strong></div>
-          <div class="stat-tile"><span>Highest VCPD Heat</span><strong id="pause-best-stars">0 ★</strong></div>
+          <div class="stat-tile"><span>Cash Balance</span><strong id="pause-cash">$500</strong></div>
+          <div class="stat-tile"><span>Highest Wanted</span><strong id="pause-best-stars">0 ★</strong></div>
         </div>
-        <div style="display:flex; gap:12px; align-items:center; margin-top:10px; flex-wrap:wrap;">
-          <canvas id="pause-map" width="144" height="144" style="border-radius:8px; border:1px solid #ff4ecd; background:#06233a;"></canvas>
+
+        <div class="pause-map-wrap">
+          <canvas id="pause-map" width="148" height="148"></canvas>
           <div class="controls-list" style="flex:1; margin-top:0;">
-            <b>TAB:</b> Switch Lucia / Jason<br/>
+            <b style="color:#f7b731;">CONTROLS GUIDE</b><br/>
             <b>WASD / Arrows:</b> Move or Drive<br/>
-            <b>Space:</b> Dodge Roll / Drift<br/>
-            <b>F / E:</b> Hijack or Exit Car<br/>
-            <b>Q / 1-4:</b> Weapons &nbsp;|&nbsp; <b>M:</b> Contract
+            <b>Mouse / Click:</b> Aim &amp; Shoot / Melee<br/>
+            <b>Space:</b> Dodge Roll / Handbrake Drift<br/>
+            <b>F / E:</b> Enter or Hijack Vehicle<br/>
+            <b>C:</b> Take Cover &nbsp;|&nbsp; <b>Q / 1-4:</b> Weapons<br/>
+            <b>R:</b> Radio &nbsp;|&nbsp; <b>M:</b> Mission &nbsp;|&nbsp; <b>H/L:</b> Horn/Lights
           </div>
         </div>
+
+        <div style="margin-top:12px; font-size:12px; font-weight:800; color:#f7b731; letter-spacing:1px;">UNDERGROUND ARMORY &amp; TUNING</div>
         <div class="shop-row">
-          <div><b>Tactical Vest</b> <span style="color:#94a3b8;">(Refill + Max Armor)</span></div>
+          <div><b>Kevlar Body Armor</b> <span style="color:#94a3b8;">(Refill + Boost Max)</span></div>
           <button class="shop-btn" id="buy-armor">$250</button>
         </div>
         <div class="shop-row">
-          <div><b>Custom Barrel &amp; Mag</b> <span style="color:#94a3b8;">(+20% Damage)</span></div>
+          <div><b>Hollow-Point &amp; Mag Mod</b> <span style="color:#94a3b8;">(+20% Damage &amp; Cap)</span></div>
           <button class="shop-btn" id="buy-weapon">$600</button>
         </div>
         <div class="shop-row">
-          <div><b>Vice ECU Turbo</b> <span style="color:#94a3b8;">(+12% Top Speed)</span></div>
+          <div><b>Drift ECU Tune</b> <span style="color:#94a3b8;">(+12% Accel &amp; Top Speed)</span></div>
           <button class="shop-btn" id="buy-tune">$700</button>
         </div>
+        <div class="shop-row">
+          <div><b>Street Medkit</b> <span style="color:#94a3b8;">(Restore 100% HP)</span></div>
+          <button class="shop-btn" id="buy-heal">$150</button>
+        </div>
+
+        <div style="margin-top:12px; font-size:12px; font-weight:800; color:#2de2e6; letter-spacing:1px;">AUDIO &amp; GRAPHICS SETTINGS</div>
         <div class="grid-2">
           <button class="pill-btn" id="opt-mute" style="justify-content:center;">Audio: ON</button>
-          <button class="pill-btn" id="opt-rain" style="justify-content:center;">Tropical Rain: OFF</button>
-          <button class="pill-btn" id="opt-time" style="justify-content:center;">Cycle Sunset/Night</button>
+          <button class="pill-btn" id="opt-rain" style="justify-content:center;">Rain &amp; Wet Asphalt: ON</button>
+          <button class="pill-btn" id="opt-time" style="justify-content:center;">Cycle Time of Day</button>
           <button class="pill-btn" id="opt-touch" style="justify-content:center;">Touch UI: AUTO</button>
         </div>
-        <button class="cta-btn" id="btn-resume">RESUME</button>
+
+        <button class="cta-btn" id="btn-resume">RESUME GAME</button>
         <button class="cta-btn secondary" id="btn-restart">RESTART SESSION</button>
       </div>
     </div>
 
-    <!-- Wasted / Busted -->
+    <!-- Wasted / Busted Screen -->
     <div class="overlay hidden" id="wasted-screen">
       <div class="modal-card" style="text-align:center;">
-        <h2 id="wasted-title" style="font-size:38px; color:#ff2a5f; margin:0;">WASTED</h2>
-        <p id="wasted-sub" style="font-size:13px; color:#e2e8f0; margin:10px 0 14px;"></p>
-        <button class="cta-btn" id="btn-retry">BACK TO OCEAN DRIVE</button>
+        <h2 id="wasted-title">WASTED</h2>
+        <p id="wasted-sub" style="font-size:13px; color:#cbd5e1; margin:10px 0 14px;">Medical treatment cost $100. Your weapons and upgrades remain intact.</p>
+        <div class="grid-2">
+          <div class="stat-tile"><span>Remaining Cash</span><strong id="wasted-cash">$400</strong></div>
+          <div class="stat-tile"><span>Wrecks Caused</span><strong id="wasted-wrecks">0</strong></div>
+        </div>
+        <button class="cta-btn" id="btn-retry">RETRY IN LIBERTY CITY</button>
       </div>
     </div>
   </div>
@@ -619,269 +791,346 @@
   (() => {
     'use strict';
 
-    // 1. Safe Storage (Immune to cross-origin iframe SecurityError)
-    const SAVE_KEY = 'leonida_vice_drift_vi_v1';
-    const memStore = {};
+    // =========================================================================
+    // 1. SAFE PERSISTENT STORAGE (Iframe / Partitioning / SecurityError Proof)
+    // =========================================================================
+    const SAVE_KEY = 'liberty_drift_iv_gamerkie_v1';
+    const memoryStore = {};
     const SafeStorage = {
-      get(k, fb) {
+      get(key, fallback) {
         try {
-          const raw = window.localStorage.getItem(k);
-          return raw ? JSON.parse(raw) : fb;
+          const raw = window.localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
         } catch (e) {
-          return memStore[k] ? JSON.parse(memStore[k]) : fb;
+          return memoryStore[key] !== undefined ? JSON.parse(memoryStore[key]) : fallback;
         }
       },
-      set(k, v) {
-        const s = JSON.stringify(v);
-        memStore[k] = s;
-        try { window.localStorage.setItem(k, s); } catch (e) {}
+      set(key, val) {
+        const serialized = JSON.stringify(val);
+        memoryStore[key] = serialized;
+        try {
+          window.localStorage.setItem(key, serialized);
+        } catch (e) {
+          // Graceful fallback when third-party storage is blocked in strict iframes
+        }
       }
     };
 
     const defaultSave = {
-      cash: 600, armorLevel: 0, weaponLevel: 0, tuneLevel: 0,
-      missionsCleared: 0, bestStars: 0, muted: false, rain: false, touchMode: 'auto'
+      cash: 500,
+      armorLevel: 0,
+      weaponLevel: 0,
+      tuneLevel: 0,
+      missionsCleared: 0,
+      wrecks: 0,
+      bestStars: 0,
+      muted: false,
+      rain: true,
+      touchMode: 'auto'
     };
-    let saveData = Object.assign({}, defaultSave, SafeStorage.get(SAVE_KEY, {}));
-    const persistSave = () => SafeStorage.set(SAVE_KEY, saveData);
 
-    // 2. Blank-Screen-Proof Canvas Setup (No desynchronized flag, ResizeObserver active)
-    const wrap = document.getElementById('game-wrap');
+    let saveData = Object.assign({}, defaultSave, SafeStorage.get(SAVE_KEY, {}));
+    function persistSave() { SafeStorage.set(SAVE_KEY, saveData); }
+
+    // =========================================================================
+    // 2. CANVAS & HIGH-DPI VIEWPORT SETUP
+    // =========================================================================
     const canvas = document.getElementById('game');
     const radarCanvas = document.getElementById('radar');
-    const ctx = canvas.getContext('2d', { alpha: false }) |
-
-| canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true }) || canvas.getContext('2d', { alpha: false });
     const rctx = radarCanvas.getContext('2d');
 
-    let viewW = Math.max(320, window.innerWidth |
-
-| 960);
-    let viewH = Math.max(240, window.innerHeight |
-
-| 540);
+    let viewW = 1280;
+    let viewH = 720;
     let dpr = 1;
 
     function resizeCanvases() {
-      const rect = wrap.getBoundingClientRect();
-      const w = rect.width > 10 ? rect.width : (window.innerWidth |
-
-| 960);
-      const h = rect.height > 10 ? rect.height : (window.innerHeight |
-
-| 540);
-      dpr = Math.min(window.devicePixelRatio |
-
-| 1, 2);
-      viewW = Math.max(320, Math.floor(w));
-      viewH = Math.max(240, Math.floor(h));
+      const rect = canvas.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      viewW = Math.max(320, rect.width || window.innerWidth);
+      viewH = Math.max(240, rect.height || window.innerHeight);
       canvas.width = Math.round(viewW * dpr);
       canvas.height = Math.round(viewH * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const rSize = document.getElementById('radar-box').clientWidth |
-
-| 140;
+      const rSize = document.getElementById('radar-box').clientWidth || 146;
       radarCanvas.width = Math.round(rSize * dpr);
       radarCanvas.height = Math.round(rSize * dpr);
       rctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
-
-    if (window.ResizeObserver) {
-      new ResizeObserver(resizeCanvases).observe(wrap);
-    }
     window.addEventListener('resize', resizeCanvases);
-    window.addEventListener('DOMContentLoaded', resizeCanvases);
     resizeCanvases();
 
-    // 3. Procedural Web Audio + Synthwave Radio
-    const STATIONS = [
-      { name: 'VICE WAVE 108.6', bpm: 118, root: 58.27, scale: [0, 3, 7, 10, 12, 14], wave: 'sawtooth', tone: 1100 },
-      { name: 'LEONIDA BASS FM', bpm: 128, root: 49, scale: [0, 3, 5, 7, 10, 12], wave: 'square', tone: 850 },
-      { name: 'GLORIANA SUNSET', bpm: 98, root: 65.41, scale: [0, 4, 7, 11, 12, 14], wave: 'triangle', tone: 1300 },
+    // =========================================================================
+    // 3. PROCEDURAL WEB AUDIO ENGINE (SFX, Engine RPM, Sirens, 3 Synth Channels)
+    // =========================================================================
+    const RADIO_STATIONS = [
+      { name: 'VLADIVOSTOK SYNTH', bpm: 124, root: 55, scale: [0, 3, 7, 10, 12, 15], wave: 'sawtooth', tone: 900 },
+      { name: 'ELECTRO-CHOC 2.5', bpm: 132, root: 65.4, scale: [0, 2, 5, 7, 10, 12], wave: 'square', tone: 1400 },
+      { name: 'LIBERTY NOIR FM', bpm: 96, root: 49, scale: [0, 3, 5, 6, 7, 10], wave: 'triangle', tone: 650 },
       { name: 'RADIO OFF', bpm: 0 }
     ];
 
     class SoundEngine {
       constructor() {
-        this.ac = null; this.master = null; this.noiseBuf = null;
-        this.engOsc = null; this.engGain = null;
-        this.stationIdx = 0; this.radioStep = 0; this.radioTimer = 0; this.sirenTimer = 0;
+        this.ac = null;
+        this.master = null;
+        this.noiseBuf = null;
+        this.engineOsc = null;
+        this.engineGain = null;
+        this.engineFilter = null;
+        this.radioStep = 0;
+        this.radioTimer = 0;
+        this.sirenTimer = 0;
+        this.stationIdx = 0;
       }
-      unlock() {
-        const AC = window.AudioContext |
 
-| window.webkitAudioContext;
-        if (!AC) return;
+      unlock() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
         if (!this.ac) {
-          this.ac = new AC();
+          this.ac = new AudioCtx();
           this.master = this.ac.createGain();
-          this.master.gain.value = saveData.muted ? 0 : 0.42;
+          this.master.gain.value = saveData.muted ? 0 : 0.45;
           this.master.connect(this.ac.destination);
 
-          const len = Math.floor(this.ac.sampleRate * 0.4);
+          const len = Math.floor(this.ac.sampleRate * 0.5);
           this.noiseBuf = this.ac.createBuffer(1, len, this.ac.sampleRate);
-          const d = this.noiseBuf.getChannelData(0);
-          for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+          const data = this.noiseBuf.getChannelData(0);
+          for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
 
-          this.engOsc = this.ac.createOscillator();
-          this.engOsc.type = 'sawtooth';
-          const filt = this.ac.createBiquadFilter();
-          filt.type = 'lowpass'; filt.frequency.value = 240;
-          this.engGain = this.ac.createGain();
-          this.engGain.gain.value = 0;
-          this.engOsc.connect(filt); filt.connect(this.engGain); this.engGain.connect(this.master);
-          this.engOsc.start();
+          this.engineOsc = this.ac.createOscillator();
+          this.engineOsc.type = 'sawtooth';
+          this.engineOsc.frequency.value = 52;
+          this.engineFilter = this.ac.createBiquadFilter();
+          this.engineFilter.type = 'lowpass';
+          this.engineFilter.frequency.value = 220;
+          this.engineGain = this.ac.createGain();
+          this.engineGain.gain.value = 0;
+          this.engineOsc.connect(this.engineFilter);
+          this.engineFilter.connect(this.engineGain);
+          this.engineGain.connect(this.master);
+          this.engineOsc.start();
         }
-        if (this.ac.state === 'suspended' |
-
-| this.ac.state === 'interrupted') {
+        if (this.ac.state === 'suspended' || this.ac.state === 'interrupted') {
           this.ac.resume().catch(() => {});
         }
       }
-      setMuted(m) {
-        if (this.master && this.ac) this.master.gain.setTargetAtTime(m ? 0 : 0.42, this.ac.currentTime, 0.03);
-      }
-      updateEngine(driving, ratio) {
-        if (!this.ac |
 
-| !this.engGain) return;
-        const t = this.ac.currentTime;
-        if (!driving |
-
-| state.paused |
-| state.screen !== 'playing') {
-          this.engGain.gain.setTargetAtTime(0, t, 0.06); return;
+      setMuted(muted) {
+        if (this.master && this.ac) {
+          this.master.gain.setTargetAtTime(muted ? 0 : 0.45, this.ac.currentTime, 0.03);
         }
-        this.engOsc.frequency.setTargetAtTime(50 + ratio * 115, t, 0.05);
-        this.engGain.gain.setTargetAtTime(0.06 + ratio * 0.06, t, 0.05);
       }
+
+      updateEngine(driving, speedRatio, throttle) {
+        if (!this.ac || !this.engineGain) return;
+        const t = this.ac.currentTime;
+        if (!driving || state.paused || state.screen !== 'playing') {
+          this.engineGain.gain.setTargetAtTime(0, t, 0.06);
+          return;
+        }
+        const freq = 48 + speedRatio * 105 + (throttle > 0.1 ? 14 : 0);
+        this.engineOsc.frequency.setTargetAtTime(freq, t, 0.05);
+        this.engineFilter.frequency.setTargetAtTime(180 + speedRatio * 520, t, 0.06);
+        this.engineGain.gain.setTargetAtTime(0.08 + speedRatio * 0.06, t, 0.05);
+      }
+
       playShot(kind) {
-        if (!this.ac |
-
-| saveData.muted |
-| this.ac.state !== 'running') return;
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
         const t = this.ac.currentTime;
-        const src = this.ac.createBufferSource(); src.buffer = this.noiseBuf;
-        const f = this.ac.createBiquadFilter(); f.type = 'bandpass';
-        f.frequency.value = kind === 'shotgun' ? 500 : kind === 'smg' ? 1400 : 1000;
+        const src = this.ac.createBufferSource();
+        src.buffer = this.noiseBuf;
+        const filt = this.ac.createBiquadFilter();
+        filt.type = 'bandpass';
+        filt.frequency.value = kind === 'shotgun' ? 520 : kind === 'smg' ? 1450 : 1050;
         const g = this.ac.createGain();
-        const dur = kind === 'shotgun' ? 0.22 : 0.1;
-        g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        src.connect(f); f.connect(g); g.connect(this.master);
-        src.start(t); src.stop(t + dur);
+        const dur = kind === 'shotgun' ? 0.24 : kind === 'smg' ? 0.08 : 0.13;
+        g.gain.setValueAtTime(kind === 'shotgun' ? 0.48 : 0.28, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        src.connect(filt);
+        filt.connect(g);
+        g.connect(this.master);
+        src.start(t);
+        src.stop(t + dur);
+
+        const osc = this.ac.createOscillator();
+        const og = this.ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(kind === 'shotgun' ? 140 : 190, t);
+        osc.frequency.exponentialRampToValueAtTime(38, t + dur * 0.8);
+        og.gain.setValueAtTime(0.3, t);
+        og.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.8);
+        osc.connect(og);
+        og.connect(this.master);
+        osc.start(t);
+        osc.stop(t + dur * 0.8);
       }
+
+      playHit(isKill) {
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
+        const t = this.ac.currentTime;
+        const osc = this.ac.createOscillator();
+        const g = this.ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(isKill ? 880 : 620, t);
+        osc.frequency.exponentialRampToValueAtTime(isKill ? 320 : 240, t + 0.08);
+        g.gain.setValueAtTime(0.16, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+        osc.connect(g);
+        g.connect(this.master);
+        osc.start(t);
+        osc.stop(t + 0.09);
+      }
+
+      playCrash(intensity) {
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
+        const t = this.ac.currentTime;
+        const src = this.ac.createBufferSource();
+        src.buffer = this.noiseBuf;
+        const filt = this.ac.createBiquadFilter();
+        filt.type = 'lowpass';
+        filt.frequency.value = 340 + intensity * 400;
+        const g = this.ac.createGain();
+        g.gain.setValueAtTime(Math.min(0.45, 0.1 + intensity * 0.35), t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        src.connect(filt);
+        filt.connect(g);
+        g.connect(this.master);
+        src.start(t);
+        src.stop(t + 0.23);
+      }
+
       playExplosion() {
-        if (!this.ac |
-
-| saveData.muted |
-| this.ac.state !== 'running') return;
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
         const t = this.ac.currentTime;
-        const src = this.ac.createBufferSource(); src.buffer = this.noiseBuf;
-        const f = this.ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 320;
-        const g = this.ac.createGain(); g.gain.setValueAtTime(0.7, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-        src.connect(f); f.connect(g); g.connect(this.master);
-        src.start(t); src.stop(t + 0.62);
+        const src = this.ac.createBufferSource();
+        src.buffer = this.noiseBuf;
+        const filt = this.ac.createBiquadFilter();
+        filt.type = 'lowpass';
+        filt.frequency.setValueAtTime(680, t);
+        filt.frequency.exponentialRampToValueAtTime(75, t + 0.7);
+        const g = this.ac.createGain();
+        g.gain.setValueAtTime(0.75, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.72);
+        src.connect(filt);
+        filt.connect(g);
+        g.connect(this.master);
+        src.start(t);
+        src.stop(t + 0.74);
       }
-      playPickup() {
-        if (!this.ac |
 
-| saveData.muted |
-| this.ac.state !== 'running') return;
+      playHorn() {
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
         const t = this.ac.currentTime;
-        [523, 659, 784].forEach((freq, i) => {
-          const o = this.ac.createOscillator(); const g = this.ac.createGain();
-          o.type = 'sine'; o.frequency.value = freq;
-          g.gain.setValueAtTime(0.1, t + i * 0.05);
-          g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.05 + 0.12);
-          o.connect(g); g.connect(this.master);
-          o.start(t + i * 0.05); o.stop(t + i * 0.05 + 0.13);
+        [340, 428].forEach(f => {
+          const osc = this.ac.createOscillator();
+          const g = this.ac.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.value = f;
+          g.gain.setValueAtTime(0.09, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+          osc.connect(g);
+          g.connect(this.master);
+          osc.start(t);
+          osc.stop(t + 0.25);
         });
       }
-      playCrash(intensity) {
-        if (!this.ac |
 
-| saveData.muted |
-| this.ac.state !== 'running') return;
+      playPickup() {
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
         const t = this.ac.currentTime;
-        const src = this.ac.createBufferSource(); src.buffer = this.noiseBuf;
-        const f = this.ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 400;
-        const g = this.ac.createGain(); g.gain.setValueAtTime(Math.min(0.4, 0.1 + intensity * 0.3), t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
-        src.connect(f); f.connect(g); g.connect(this.master);
-        src.start(t); src.stop(t + 0.19);
+        [523.25, 659.25, 783.99].forEach((f, idx) => {
+          const osc = this.ac.createOscillator();
+          const g = this.ac.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = f;
+          g.gain.setValueAtTime(0.11, t + idx * 0.05);
+          g.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.05 + 0.14);
+          osc.connect(g);
+          g.connect(this.master);
+          osc.start(t + idx * 0.05);
+          osc.stop(t + idx * 0.05 + 0.15);
+        });
       }
-      tickMusic(dt, stars, inCar) {
-        if (!this.ac |
 
-| saveData.muted |
-| this.ac.state !== 'running' |
-| state.screen !== 'playing' |
-| state.paused) return;
-        if (stars > 0) {
+      tickMusicAndSiren(dt, wantedStars, inCar) {
+        if (!this.ac || saveData.muted || this.ac.state !== 'running') return;
+        if (wantedStars > 0 && state.screen === 'playing' && !state.paused) {
           this.sirenTimer += dt;
           if (this.sirenTimer >= 0.42) {
             this.sirenTimer = 0;
             const t = this.ac.currentTime;
-            const o = this.ac.createOscillator(); const g = this.ac.createGain();
-            o.type = 'triangle';
-            const hi = ((performance.now() / 420) | 0) % 2 === 0;
-            o.frequency.setValueAtTime(hi ? 740 : 540, t);
-            g.gain.setValueAtTime(0.03, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-            o.connect(g); g.connect(this.master); o.start(t); o.stop(t + 0.36);
+            const osc = this.ac.createOscillator();
+            const g = this.ac.createGain();
+            osc.type = 'triangle';
+            const high = (Math.floor(performance.now() / 420) % 2) === 0;
+            osc.frequency.setValueAtTime(high ? 720 : 540, t);
+            osc.frequency.linearRampToValueAtTime(high ? 540 : 720, t + 0.36);
+            g.gain.setValueAtTime(0.032, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+            osc.connect(g);
+            g.connect(this.master);
+            osc.start(t);
+            osc.stop(t + 0.39);
           }
         }
-        const st = STATIONS[this.stationIdx];
-        if (!st |
 
-| st.bpm === 0) return;
+        const st = RADIO_STATIONS[this.stationIdx];
+        if (!st || st.bpm === 0 || state.screen !== 'playing' || state.paused) return;
         const stepDur = 60 / st.bpm / 2;
         this.radioTimer += dt;
         if (this.radioTimer >= stepDur) {
           this.radioTimer -= stepDur;
           const t = this.ac.currentTime;
           const step = this.radioStep++ % 16;
-          const semi = st.scale[(step * 3 + ((step / 4) | 0)) % st.scale.length];
-          const o = this.ac.createOscillator(); const f = this.ac.createBiquadFilter(); const g = this.ac.createGain();
-          o.type = st.wave;
-          o.frequency.value = st.root * Math.pow(2, semi / 12) * (step % 4 === 2 ? 2 : 1);
-          f.type = 'lowpass'; f.frequency.value = st.tone;
-          g.gain.setValueAtTime(inCar ? 0.065 : 0.02, t);
-          g.gain.exponentialRampToValueAtTime(0.001, t + stepDur * 0.85);
-          o.connect(f); f.connect(g); g.connect(this.master);
-          o.start(t); o.stop(t + stepDur * 0.88);
+          const volScale = inCar ? 0.075 : 0.022;
+          const semi = st.scale[(step * 3 + Math.floor(step / 4)) % st.scale.length];
+          const freq = st.root * Math.pow(2, semi / 12) * (step % 4 === 2 ? 2 : 1);
+
+          const osc = this.ac.createOscillator();
+          const filt = this.ac.createBiquadFilter();
+          const g = this.ac.createGain();
+          osc.type = st.wave;
+          osc.frequency.value = freq;
+          filt.type = 'lowpass';
+          filt.frequency.value = st.tone;
+          g.gain.setValueAtTime(volScale, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + stepDur * 0.9);
+          osc.connect(filt);
+          filt.connect(g);
+          g.connect(this.master);
+          osc.start(t);
+          osc.stop(t + stepDur * 0.92);
+
+          if (step % 4 === 0) {
+            const kick = this.ac.createOscillator();
+            const kg = this.ac.createGain();
+            kick.type = 'sine';
+            kick.frequency.setValueAtTime(110, t);
+            kick.frequency.exponentialRampToValueAtTime(34, t + 0.11);
+            kg.gain.setValueAtTime(volScale * 1.4, t);
+            kg.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+            kick.connect(kg);
+            kg.connect(this.master);
+            kick.start(t);
+            kick.stop(t + 0.13);
+          }
         }
       }
     }
+
     const sound = new SoundEngine();
 
-    // 4. STATE OF LEONIDA / VICE CITY MAP GEOMETRY (6400 x 6400)
-    const WORLD_SIZE = 6400;
-    const MAIN_START = 600;
-    const GRID_BLOCKS = 10;
-    const BLOCK_SIZE = 375;
+    // =========================================================================
+    // 4. PROCEDURAL LIBERTY CITY MAP (Blocks, Bridges, Waterfront, Props)
+    // =========================================================================
+    const GRID_BLOCKS = 14;
+    const BLOCK_SIZE = 440;
     const ROAD_W = 120;
-    const MAIN_END = 4800;
-
-    // Causeway Bridges & Leonida Keys Islands
-    const bridges = [
-      { x: 2100, y: 4800, w: 120, h: 320, dir: 'v' },
-      { x: 2500, y: 5300, w: 520, h: 120, dir: 'h' }
-    ];
-    const islands = [
-      { x: 1800, y: 5100, w: 700, h: 500, name: 'GLORIANA KEY WEST' },
-      { x: 3000, y: 5200, w: 800, h: 550, name: 'GLORIANA KEY EAST' }
-    ];
-
-    function onLand(x, y) {
-      if (x >= 600 && x <= 4800 && y >= 600 && y <= 4800) return true;
-      if (x >= 1800 && x <= 2500 && y >= 5100 && y <= 5600) return true;
-      if (x >= 3000 && x <= 3800 && y >= 5200 && y <= 5750) return true;
-      if (x >= 2100 && x <= 2220 && y >= 4800 && y <= 5120) return true;
-      if (x >= 2500 && x <= 3020 && y >= 5300 && y <= 5420) return true;
-      return false;
-    }
+    const LAND_OFFSET = 760;
+    const LAND_SIZE = GRID_BLOCKS * BLOCK_SIZE + ROAD_W; // 6280
+    const SIDEWALK = 20;
 
     function mulberry32(seed) {
       return function() {
@@ -891,114 +1140,175 @@
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
       };
     }
-    const rng = mulberry32(6062026);
 
+    const rng = mulberry32(202604);
     const buildings = [];
-    const palms = [];
-    const crates = [];
-    const swamps = [
-      { x: 650, y: 740, w: 660, h: 1350 },
-      { x: 650, y: 2450, w: 660, h: 1100 }
+    const parks = [];
+    const props = [];
+    const intersections = [];
+
+    // Bridges & Waterfront Dock Islands
+    const bridges = [
+      { x: 440, y: LAND_OFFSET + 3 * BLOCK_SIZE, w: 320, h: ROAD_W, dir: 'h' }
+    ];
+    const piers = [
+      { x: 120, y: LAND_OFFSET + 3 * BLOCK_SIZE - 100, w: 320, h: 320, isDock: true },
+      { x: LAND_OFFSET + 10 * BLOCK_SIZE, y: LAND_OFFSET + LAND_SIZE, w: 120, h: 260, isDock: false }
     ];
 
-    function getDistrict(x, y) {
-      if (y > 4800) return x < 2800 ? 'GLORIANA KEY WEST' : 'GLORIANA KEY EAST';
-      if (x > 4420) return 'VICE BEACH';
-      if (x < 1350) return 'GRASSRIVERS';
-      if (y > 3800) return 'SOUTHSIDE';
-      if (x < 2450 && y > 2400) return 'LITTLE CUBA';
-      if (x > 3300 && y < 2200) return 'TEQUESTA RETREAT';
-      return 'VICE CITY DOWNTOWN';
+    const NEON_COLORS = ['#2de2e6', '#ff3b5c', '#f7b731', '#a855f7', '#38bdf8'];
+    const ROOF_COLORS = ['#1b2230', '#232b3a', '#161b26', '#293245'];
+    const WALL_COLORS = ['#1e2533', '#272f40', '#191f2b', '#2d3444'];
+
+    function getDistrict(gx, gy) {
+      if (gx >= 6 && gx <= 7 && gy >= 6 && gy <= 7) return 'MIDDLE PARK';
+      if (gx >= 5 && gx <= 8 && gy >= 4 && gy <= 9) return 'STAR JUNCTION';
+      if (gy >= 11) return 'BOHAN DOCKS';
+      if (gx <= 2 || gx >= 11) return 'ALDERNEY SHORE';
+      return 'ALGONQUIN MIDTOWN';
     }
 
-    const VICE_NEON = ['#ff4ecd', '#00f5d4', '#ffbe0b', '#fb5607', '#8338ec'];
-    const VICE_WALLS = ['#2a2344', '#33294d', '#242b47', '#3b2d4a'];
-    const VICE_ROOFS = ['#383159', '#453b66', '#2b324e', '#4c385a'];
+    for (let ix = 0; ix <= GRID_BLOCKS; ix++) {
+      for (let iy = 0; iy <= GRID_BLOCKS; iy++) {
+        intersections.push({
+          x: LAND_OFFSET + ix * BLOCK_SIZE + ROAD_W / 2,
+          y: LAND_OFFSET + iy * BLOCK_SIZE + ROAD_W / 2,
+          ix, iy,
+          hasLight: (ix + iy) % 2 === 0 && ix > 0 && ix < GRID_BLOCKS && iy > 0 && iy < GRID_BLOCKS
+        });
+      }
+    }
+
+    // Dock island crates & lamps
+    props.push({ type: 'crate', x: 240, y: LAND_OFFSET + 3 * BLOCK_SIZE + 40, hp: 30, broken: false, timer: 0 });
+    props.push({ type: 'crate', x: 280, y: LAND_OFFSET + 3 * BLOCK_SIZE + 80, hp: 30, broken: false, timer: 0 });
+    props.push({ type: 'lamp', x: 425, y: LAND_OFFSET + 3 * BLOCK_SIZE - 10, hp: 40, broken: false, timer: 0 });
+    props.push({ type: 'lamp', x: 425, y: LAND_OFFSET + 3 * BLOCK_SIZE + ROAD_W + 10, hp: 40, broken: false, timer: 0 });
 
     for (let gx = 0; gx < GRID_BLOCKS; gx++) {
       for (let gy = 0; gy < GRID_BLOCKS; gy++) {
-        const bx0 = MAIN_START + gx * BLOCK_SIZE + ROAD_W;
-        const by0 = MAIN_START + gy * BLOCK_SIZE + ROAD_W;
-        const inner = BLOCK_SIZE - ROAD_W; // 255
+        const bx0 = LAND_OFFSET + gx * BLOCK_SIZE + ROAD_W;
+        const by0 = LAND_OFFSET + gy * BLOCK_SIZE + ROAD_W;
+        const inner = BLOCK_SIZE - ROAD_W;
+        const district = getDistrict(gx, gy);
 
-        // Grassrivers marsh blocks on far west (gx <= 1) have trees instead of skyscrapers
-        if (gx <= 1 && gy >= 0 && gy <= 8) {
-          for (let p = 0; p < 5; p++) {
-            palms.push({ x: bx0 + 30 + rng() * (inner - 60), y: by0 + 30 + rng() * (inner - 60), r: 16 + rng() * 8 });
+        const corners = [
+          [bx0 + 8, by0 + 8],
+          [bx0 + inner - 8, by0 + 8],
+          [bx0 + inner - 8, by0 + inner - 8],
+          [bx0 + 8, by0 + inner - 8]
+        ];
+        corners.forEach(([cx, cy], idx) => {
+          if (idx % 2 === 0) {
+            props.push({ type: 'lamp', x: cx, y: cy, hp: 40, broken: false, timer: 0 });
+          } else if (rng() < 0.45) {
+            props.push({ type: 'hydrant', x: cx, y: cy, hp: 30, broken: false, timer: 0 });
+          }
+        });
+
+        if (district === 'MIDDLE PARK') {
+          parks.push({
+            x: bx0 + SIDEWALK,
+            y: by0 + SIDEWALK,
+            w: inner - SIDEWALK * 2,
+            h: inner - SIDEWALK * 2,
+            pond: (gx === 6 && gy === 6) || (gx === 7 && gy === 7)
+          });
+          for (let t = 0; t < 4; t++) {
+            props.push({
+              type: 'tree',
+              x: bx0 + 48 + rng() * (inner - 96),
+              y: by0 + 48 + rng() * (inner - 96),
+              r: 18 + rng() * 10,
+              hp: 999
+            });
           }
           continue;
         }
 
-        // Palm trees on sidewalks
-        palms.push({ x: bx0 + 8, y: by0 + 8, r: 14 });
-        palms.push({ x: bx0 + inner - 8, y: by0 + inner - 8, r: 14 });
-
-        const pad = 18;
-        const alley = 14;
-        const sub = (inner - pad * 2 - alley) / 2;
-        const isOceanStrip = gx === GRID_BLOCKS - 1;
+        const pad = SIDEWALK;
+        const alley = 16;
+        const subW = (inner - pad * 2 - alley) / 2;
+        const isDowntown = district === 'STAR JUNCTION' || district === 'ALGONQUIN MIDTOWN';
 
         for (let sx = 0; sx < 2; sx++) {
           for (let sy = 0; sy < 2; sy++) {
-            if (rng() < 0.14) {
-              crates.push({ x: bx0 + pad + sx * (sub + alley) + sub / 2, y: by0 + pad + sy * (sub + alley) + sub / 2, hp: 30, broken: false });
+            if (district === 'BOHAN DOCKS' && rng() < 0.25) {
+              props.push({
+                type: 'crate',
+                x: bx0 + pad + sx * (subW + alley) + subW * 0.5,
+                y: by0 + pad + sy * (subW + alley) + subW * 0.5,
+                hp: 35, broken: false, timer: 0
+              });
               continue;
             }
-            const x = bx0 + pad + sx * (sub + alley);
-            const y = by0 + pad + sy * (sub + alley);
-            const h = (isOceanStrip ? 85 : 65) + Math.floor(rng() * (gx >= 4 && gx <= 8 ? 135 : 70));
+            const x = bx0 + pad + sx * (subW + alley);
+            const y = by0 + pad + sy * (subW + alley);
+            const hBase = district === 'STAR JUNCTION' ? 125 : isDowntown ? 95 : 58;
+            const h = hBase + Math.floor(rng() * (district === 'STAR JUNCTION' ? 105 : 65));
+            const neon = (district === 'STAR JUNCTION' || rng() < 0.35)
+              ? NEON_COLORS[Math.floor(rng() * NEON_COLORS.length)]
+              : null;
             buildings.push({
-              x, y, w: sub, h: sub, height: h,
-              wall: VICE_WALLS[Math.floor(rng() * VICE_WALLS.length)],
-              roof: VICE_ROOFS[Math.floor(rng() * VICE_ROOFS.length)],
-              neon: (isOceanStrip |
-
-| rng() < 0.48) ? VICE_NEON[Math.floor(rng() * VICE_NEON.length)] : null
+              x, y, w: subW, h: subW, height: h,
+              wall: WALL_COLORS[Math.floor(rng() * WALL_COLORS.length)],
+              roof: ROOF_COLORS[Math.floor(rng() * ROOF_COLORS.length)],
+              neon,
+              hasHelipad: h > 185 && rng() < 0.35
             });
           }
+        }
+
+        if (rng() < 0.4) {
+          props.push({
+            type: 'crate',
+            x: bx0 + inner / 2,
+            y: by0 + inner / 2,
+            hp: 30, broken: false, timer: 0
+          });
         }
       }
     }
 
-    // Resort Villas on Gloriana Key Islands (keeping Causeway corridors clear)
-    [
-      { x: 1850, y: 5150, w: 150, h: 120, height: 60, wall: '#3b2d4a', roof: '#4c385a', neon: '#00f5d4' },
-      { x: 2300, y: 5150, w: 150, h: 120, height: 70, wall: '#2a2344', roof: '#383159', neon: '#ff4ecd' },
-      { x: 3120, y: 5240, w: 160, h: 130, height: 85, wall: '#33294d', roof: '#453b66', neon: '#ffbe0b' },
-      { x: 3500, y: 5260, w: 180, h: 140, height: 95, wall: '#242b47', roof: '#2b324e', neon: '#ff4ecd' }
-    ].forEach(b => buildings.push(b));
-
-    for (let i = 0; i < 14; i++) {
-      palms.push({ x: 4520 + (i % 2) * 140, y: 780 + i * 280, r: 16 });
+    // Offscreen Asphalt Grain Pattern
+    const asphaltTile = document.createElement('canvas');
+    asphaltTile.width = 256;
+    asphaltTile.height = 256;
+    const actx = asphaltTile.getContext('2d');
+    actx.fillStyle = '#151922';
+    actx.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 1600; i++) {
+      const gx = (rng() * 256) | 0;
+      const gy = (rng() * 256) | 0;
+      actx.fillStyle = rng() > 0.5 ? 'rgba(255,255,255,0.028)' : 'rgba(0,0,0,0.16)';
+      actx.fillRect(gx, gy, 2, 2);
     }
+    const asphaltPattern = ctx.createPattern(asphaltTile, 'repeat');
 
-    // 5. WEAPONS, CARS, CHARACTERS (LUCIA & JASON)
-    const CHARS = [
-      { id: 'lucia', name: 'LUCIA', color: '#ff4ecd', speedBonus: 1.12, dmgBonus: 1.0, carHpBonus: 1.0 },
-      { id: 'jason', name: 'JASON', color: '#00f5d4', speedBonus: 1.0, dmgBonus: 1.18, carHpBonus: 1.2 }
-    ];
-
+    // =========================================================================
+    // 5. WEAPONS, VEHICLES & GAME STATE
+    // =========================================================================
     const WEAPONS = [
-      { id: 'fist', name: 'FIST', melee: true, dmg: 35, rate: 0.28, range: 52, mag: 0, reload: 0, spread: 0, pellets: 1, color: '#fff' },
-      { id: 'pistol', name: '9MM PISTOL', melee: false, dmg: 34, rate: 0.22, range: 640, mag: 12, reload: 1.0, spread: 0.04, pellets: 1, color: '#ffbe0b' },
-      { id: 'smg', name: 'VICE SMG', melee: false, dmg: 21, rate: 0.085, range: 560, mag: 32, reload: 1.3, spread: 0.11, pellets: 1, color: '#00f5d4' },
-      { id: 'shotgun', name: 'COMBAT SHOTGUN', melee: false, dmg: 23, rate: 0.64, range: 400, mag: 6, reload: 1.5, spread: 0.22, pellets: 6, color: '#ff4ecd' }
+      { id: 'fist', name: 'FIST', melee: true, dmg: 32, rate: 0.28, range: 52, mag: 0, reload: 0, spread: 0, pellets: 1, recoil: 0, color: '#fff' },
+      { id: 'pistol', name: 'PISTOL', melee: false, dmg: 34, rate: 0.22, range: 640, mag: 12, reload: 1.05, spread: 0.04, pellets: 1, recoil: 0.06, color: '#fde047' },
+      { id: 'smg', name: 'SMG', melee: false, dmg: 20, rate: 0.085, range: 560, mag: 32, reload: 1.35, spread: 0.11, pellets: 1, recoil: 0.045, color: '#38bdf8' },
+      { id: 'shotgun', name: 'SHOTGUN', melee: false, dmg: 22, rate: 0.65, range: 400, mag: 6, reload: 1.55, spread: 0.24, pellets: 6, recoil: 0.14, color: '#fb923c' }
     ];
 
     const CAR_TYPES = {
-      cheetah: { name: 'Cheetah Neon', w: 46, d: 22, hp: 145, accel: 510, maxSpd: 550, turn: 3.3, colors: ['#ff4ecd', '#00f5d4', '#ffbe0b', '#ef4444'] },
-      sedan:   { name: 'Leonida Coupe', w: 44, d: 22, hp: 140, accel: 410, maxSpd: 445, turn: 3.0, colors: ['#64748b', '#3b82f6', '#a855f7', '#f97316'] },
-      taxi:    { name: 'Vice Cab', w: 45, d: 22, hp: 150, accel: 395, maxSpd: 430, turn: 2.9, colors: ['#facc15'] },
-      gator:   { name: 'Swamp Gator 4x4', w: 50, d: 25, hp: 230, accel: 380, maxSpd: 415, turn: 2.7, colors: ['#15803d', '#334155', '#78350f'] },
-      police:  { name: 'VCPD Cruiser', w: 46, d: 23, hp: 190, accel: 485, maxSpd: 530, turn: 3.2, colors: ['#f8fafc'], isCop: true }
+      sedan:  { name: 'Banshee Sedan', w: 44, d: 22, hp: 140, accel: 400, maxSpd: 440, turn: 3.0, colors: ['#475569', '#334155', '#64748b', '#991b1b', '#1e40af'] },
+      coupe:  { name: 'Comet Drift',   w: 44, d: 22, hp: 125, accel: 495, maxSpd: 540, turn: 3.4, colors: ['#dc2626', '#0284c7', '#d97706', '#7c3aed', '#e11d48'] },
+      taxi:   { name: 'Liberty Cab',   w: 46, d: 23, hp: 150, accel: 390, maxSpd: 430, turn: 2.9, colors: ['#eab308'] },
+      suv:    { name: 'Patriot SUV',   w: 50, d: 25, hp: 220, accel: 360, maxSpd: 400, turn: 2.6, colors: ['#1e293b', '#0f172a', '#3f3f46'] },
+      police: { name: 'LCPD Cruiser',  w: 46, d: 23, hp: 185, accel: 475, maxSpd: 525, turn: 3.2, colors: ['#f8fafc'], isCop: true }
     };
 
     const state = {
       screen: 'start',
       paused: false,
-      charIdx: 0,
-      timeOfDay: 0.63, // Golden Vice Sunset start
-      cam: { x: 4410, y: 2520, shake: 0 },
+      timeOfDay: 0.80,
+      trafficClock: 0,
+      cam: { x: LAND_OFFSET + 6 * BLOCK_SIZE + 60, y: LAND_OFFSET + 6 * BLOCK_SIZE + 60, shake: 0 },
       player: null,
       cars: [],
       peds: [],
@@ -1010,69 +1320,116 @@
       wantedHeat: 0,
       wantedStars: 0,
       wantedEvadeTimer: 0,
+      hitMarkerTimer: 0,
       bannerTimer: 0,
       mission: null
     };
 
     function createPlayer() {
-      const cap = saveData.weaponLevel * 3;
+      const startX = LAND_OFFSET + 6 * BLOCK_SIZE + 60;
+      const startY = LAND_OFFSET + 6 * BLOCK_SIZE + 140;
+      const bonusCap = saveData.weaponLevel * 3;
       return {
-        x: 4410, y: 2520, vx: 0, vy: 0, angle: -Math.PI / 2, r: 12,
+        x: startX, y: startY, vx: 0, vy: 0, angle: -Math.PI / 2,
+        r: 12,
         hp: 100, maxHp: 100,
-        armor: 30 + saveData.armorLevel * 25,
+        armor: 25 + saveData.armorLevel * 25,
         maxArmor: 50 + saveData.armorLevel * 25,
         stamina: 100,
         weaponIdx: 1,
-        ammo: [0, 12 + cap, 32 + cap * 2, 6 + Math.floor(cap / 2)],
-        fireTimer: 0, reloadTimer: 0, dodgeTimer: 0, dodgeCooldown: 0,
-        car: null, swingAnim: 0
+        ammo: [0, 12 + bonusCap, 32 + bonusCap * 2, 6 + Math.floor(bonusCap / 2)],
+        fireTimer: 0,
+        reloadTimer: 0,
+        recoilBloom: 0,
+        dodgeTimer: 0,
+        dodgeCooldown: 0,
+        crouchCover: false,
+        inCover: false,
+        car: null,
+        swingAnim: 0,
+        comboStep: 0,
+        comboTimer: 0
       };
     }
 
     function spawnCar(x, y, angle, typeKey, aiMode = 'traffic') {
       const spec = CAR_TYPES[typeKey];
+      const color = spec.colors[(Math.random() * spec.colors.length) | 0];
       return {
-        type: typeKey, spec,
-        color: spec.colors[(Math.random() * spec.colors.length) | 0],
+        id: Math.random(),
+        type: typeKey, spec, color,
         x, y, vx: 0, vy: 0, angle,
         hp: spec.hp, maxHp: spec.hp,
         aiMode, driver: aiMode !== 'none',
+        headlights: true,
+        smokeTimer: 0,
         wrecked: false, wreckTimer: 0,
         aiDir: Math.round(angle / (Math.PI / 2)) & 3,
-        aiSpeed: 175 + Math.random() * 75,
-        turnCooldown: 0, panicTimer: 0
+        aiSpeed: 170 + Math.random() * 75,
+        panicTimer: 0, turnCooldown: 0, swerveDir: 0
       };
     }
 
-    function resetWorld() {
+    function resetCityWorld() {
       state.player = createPlayer();
       state.cam.x = state.player.x;
       state.cam.y = state.player.y;
-      state.cars = []; state.peds = []; state.cops = [];
-      state.bullets = []; state.particles = []; state.skids = []; state.pickups = [];
-      state.wantedHeat = 0; state.wantedStars = 0; state.wantedEvadeTimer = 0;
+      state.cam.shake = 0;
+      state.cars = [];
+      state.peds = [];
+      state.cops = [];
+      state.bullets = [];
+      state.particles = [];
+      state.skids = [];
+      state.pickups = [];
+      state.wantedHeat = 0;
+      state.wantedStars = 0;
+      state.wantedEvadeTimer = 0;
       state.mission = null;
 
-      // Parked supercar + beach 4x4 right on Ocean Drive
-      state.cars.push(spawnCar(4410, 2440, -Math.PI / 2, 'cheetah', 'none'));
-      state.cars.push(spawnCar(4455, 2590, Math.PI / 2, 'gator', 'none'));
-      state.cars.push(spawnCar(2160, 5200, 0, 'cheetah', 'none')); // Gloriana Key car
+      state.cars.push(spawnCar(state.player.x + 48, state.player.y - 20, -Math.PI / 2, 'coupe', 'none'));
+      state.cars.push(spawnCar(state.player.x - 52, state.player.y + 40, Math.PI / 2, 'taxi', 'none'));
+      // Dock island getaway car across the west harbor bridge
+      state.cars.push(spawnCar(260, LAND_OFFSET + 3 * BLOCK_SIZE + 60, 0, 'coupe', 'none'));
 
-      for (let i = 0; i < 20; i++) spawnTraffic(true);
-      for (let i = 0; i < 26; i++) spawnPed(true);
+      for (let i = 0; i < 24; i++) spawnTrafficNearPlayer(true);
+      for (let i = 0; i < 34; i++) spawnPedNearPlayer(true);
+      for (let i = 0; i < 12; i++) {
+        const ix = 1 + ((Math.random() * (GRID_BLOCKS - 2)) | 0);
+        const iy = 1 + ((Math.random() * (GRID_BLOCKS - 2)) | 0);
+        state.pickups.push({
+          x: LAND_OFFSET + ix * BLOCK_SIZE + ROAD_W + 40,
+          y: LAND_OFFSET + iy * BLOCK_SIZE + ROAD_W + 40,
+          kind: i % 3 === 0 ? 'armor' : i % 3 === 1 ? 'hp' : 'cash',
+          bob: Math.random() * 6
+        });
+      }
     }
 
     function isInsideBuilding(x, y, pad = 0) {
       for (let i = 0; i < buildings.length; i++) {
         const b = buildings[i];
-        if (x > b.x - pad && x < b.x + b.w + pad && y > b.y - pad && y < b.y + b.h + pad) return true;
+        if (x > b.x - pad && x < b.x + b.w + pad && y > b.y - pad && y < b.y + b.h + pad) return b;
       }
-      return false;
+      return null;
     }
 
-    function hasLOS(x1, y1, x2, y2) {
-      const d = Math.hypot(x2 - x1, y2 - y1);
-      const steps = Math.max(1, Math.ceil(d / 30));
+    function isInsideWater(x, y) {
+      if (x >= LAND_OFFSET && x <= LAND_OFFSET + LAND_SIZE && y >= LAND_OFFSET && y <= LAND_OFFSET + LAND_SIZE) {
+        return false;
+      }
+      for (const br of bridges) {
+        if (x >= br.x && x <= br.x + br.w && y >= br.y && y <= br.y + br.h) return false;
+      }
+      for (const p of piers) {
+        if (x >= p.x && x <= p.x + p.w && y >= p.y && y <= p.y + p.h) return false;
+      }
+      return true;
+    }
+
+    function hasLineOfSight(x1, y1, x2, y2) {
+      const dist = Math.hypot(x2 - x1, y2 - y1);
+      const steps = Math.max(1, Math.ceil(dist / 28));
       for (let s = 1; s < steps; s++) {
         const t = s / steps;
         if (isInsideBuilding(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, 0)) return false;
@@ -1080,98 +1437,113 @@
       return true;
     }
 
-    function spawnTraffic(init = false) {
-      const p = state.player;
-      for (let k = 0; k < 8; k++) {
+    function spawnTrafficNearPlayer(initial = false) {
+      const px = state.player ? state.player.x : state.cam.x;
+      const py = state.player ? state.player.y : state.cam.y;
+      const minD = initial ? 180 : 680;
+      const maxD = 1550;
+      for (let tries = 0; tries < 10; tries++) {
         const horiz = Math.random() < 0.5;
-        const lane = 1 + ((Math.random() * (GRID_BLOCKS - 1)) | 0);
+        const laneIdx = 1 + ((Math.random() * (GRID_BLOCKS - 1)) | 0);
         const dir = Math.random() < 0.5 ? 1 : -1;
         let x, y, ang;
         if (horiz) {
-          y = MAIN_START + lane * BLOCK_SIZE + ROAD_W / 2 + dir * 24;
-          x = Math.max(700, Math.min(4450, p.x + (Math.random() * 2 - 1) * 1400));
+          y = LAND_OFFSET + laneIdx * BLOCK_SIZE + ROAD_W / 2 + dir * 26;
+          x = Math.max(LAND_OFFSET + 80, Math.min(LAND_OFFSET + LAND_SIZE - 80, px + (Math.random() * 2 - 1) * maxD));
           ang = dir > 0 ? 0 : Math.PI;
         } else {
-          x = MAIN_START + lane * BLOCK_SIZE + ROAD_W / 2 - dir * 24;
-          y = Math.max(700, Math.min(4450, p.y + (Math.random() * 2 - 1) * 1400));
+          x = LAND_OFFSET + laneIdx * BLOCK_SIZE + ROAD_W / 2 - dir * 26;
+          y = Math.max(LAND_OFFSET + 80, Math.min(LAND_OFFSET + LAND_SIZE - 80, py + (Math.random() * 2 - 1) * maxD));
           ang = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
         }
-        const d = Math.hypot(x - p.x, y - p.y);
-        if (d < (init ? 180 : 620) |
-
-| d > 1700) continue;
-        if (state.cars.some(c => Math.hypot(c.x - x, c.y - y) < 100)) continue;
+        const d = Math.hypot(x - px, y - py);
+        if (d < minD || d > maxD + 300) continue;
+        if (state.cars.some(c => Math.hypot(c.x - x, c.y - y) < 110)) continue;
         const r = Math.random();
-        const type = r < 0.35 ? 'sedan' : r < 0.6 ? 'cheetah' : r < 0.8 ? 'taxi' : r < 0.93 ? 'gator' : 'police';
-        state.cars.push(spawnCar(x, y, ang, type, 'traffic'));
+        const typeKey = r < 0.42 ? 'sedan' : r < 0.65 ? 'taxi' : r < 0.85 ? 'coupe' : r < 0.95 ? 'suv' : 'police';
+        state.cars.push(spawnCar(x, y, ang, typeKey, 'traffic'));
         return;
       }
     }
 
-    function spawnPed(init = false) {
-      const p = state.player;
-      for (let k = 0; k < 8; k++) {
-        const x = Math.max(700, Math.min(4720, p.x + (Math.random() * 2 - 1) * 1050));
-        const y = Math.max(700, Math.min(4720, p.y + (Math.random() * 2 - 1) * 1050));
-        const d = Math.hypot(x - p.x, y - p.y);
-        if (d < (init ? 120 : 520) |
+    function spawnPedNearPlayer(initial = false) {
+      const px = state.player ? state.player.x : state.cam.x;
+      const py = state.player ? state.player.y : state.cam.y;
+      const minD = initial ? 120 : 580;
+      for (let tries = 0; tries < 10; tries++) {
+        const gx = Math.max(0, Math.min(GRID_BLOCKS - 1, Math.floor((px - LAND_OFFSET) / BLOCK_SIZE) + (((Math.random() * 5) | 0) - 2)));
+        const gy = Math.max(0, Math.min(GRID_BLOCKS - 1, Math.floor((py - LAND_OFFSET) / BLOCK_SIZE) + (((Math.random() * 5) | 0) - 2)));
+        const bx = LAND_OFFSET + gx * BLOCK_SIZE + ROAD_W + 10;
+        const by = LAND_OFFSET + gy * BLOCK_SIZE + ROAD_W + 10;
+        const inner = BLOCK_SIZE - ROAD_W - 20;
+        const side = (Math.random() * 4) | 0;
+        let x = bx, y = by;
+        if (side === 0) x += Math.random() * inner;
+        else if (side === 1) { x += inner; y += Math.random() * inner; }
+        else if (side === 2) { x += Math.random() * inner; y += inner; }
+        else y += Math.random() * inner;
 
-| isInsideBuilding(x, y, 10) |
-| !onLand(x, y)) continue;
-        const shirt = ['#ff4ecd', '#00f5d4', '#fbbf24', '#f8fafc', '#fb7185'][(Math.random() * 5) | 0];
-        state.peds.push({ x, y, angle: Math.random() * Math.PI * 2, hp: 45, speed: 48 + Math.random() * 20, fleeTimer: 0, shirt });
+        const d = Math.hypot(x - px, y - py);
+        if (d < minD || d > 1350 || isInsideBuilding(x, y, 10)) continue;
+        const shirt = ['#cbd5e1', '#64748b', '#e11d48', '#2563eb', '#d97706', '#059669'][(Math.random() * 6) | 0];
+        state.peds.push({
+          x, y, angle: Math.random() * Math.PI * 2,
+          hp: 45, speed: 46 + Math.random() * 20,
+          fleeTimer: 0, shirt
+        });
         return;
       }
     }
 
-    // 6. INPUTS (Focus + Scroll Prevention + Mobile Touch)
+    // =========================================================================
+    // 6. INPUT HANDLING (Iframe Focus, Scroll Lock, Mouse, Touch)
+    // =========================================================================
     const keys = new Set();
     const mouse = { x: viewW / 2, y: viewH / 2, down: false };
     const touchState = { active: false, joyX: 0, joyY: 0, fire: false, drift: false };
 
     function detectTouchUI() {
+      const el = document.getElementById('touch-controls');
       const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-      const show = saveData.touchMode === 'on' |
-
-| (saveData.touchMode === 'auto' && (touchState.active |
-| isCoarse |
-| window.innerWidth < 760));
-      document.getElementById('touch-controls').classList.toggle('active', show);
+      const show = saveData.touchMode === 'on' || (saveData.touchMode === 'auto' && (touchState.active || isCoarse || window.innerWidth < 760));
+      el.classList.toggle('active', show);
     }
 
-    const BLOCK_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' ', 'Tab']);
+    const BLOCK_SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' ']);
+
     window.addEventListener('keydown', e => {
-      if (BLOCK_KEYS.has(e.key) |
-
-| BLOCK_KEYS.has(e.code)) e.preventDefault();
+      if (BLOCK_SCROLL_KEYS.has(e.key) || BLOCK_SCROLL_KEYS.has(e.code)) {
+        e.preventDefault();
+      }
       sound.unlock();
-      const c = e.code;
-      if (c === 'Escape' |
+      const code = e.code;
 
-| c === 'KeyP') { if (state.screen === 'playing') togglePause(); return; }
-      if (state.screen === 'wasted' && (c === 'Enter' |
-
-| c === 'Space')) { retryGame(); return; }
-      if (state.screen !== 'playing' |
-
-| state.paused) return;
+      if (code === 'Escape' || code === 'KeyP') {
+        if (state.screen === 'playing') togglePause();
+        return;
+      }
+      if (state.screen === 'wasted' && (code === 'Enter' || code === 'Space')) {
+        retryFromWasted();
+        return;
+      }
+      if (state.screen !== 'playing' || state.paused) return;
 
       if (!e.repeat) {
-        if (c === 'Tab') switchProtagonist();
-        else if (c === 'KeyF' |
-
-| c === 'KeyE') tryEnterOrExitCar();
-        else if (c === 'KeyQ') selectWeapon((state.player.weaponIdx + 1) % WEAPONS.length);
-        else if (c === 'Digit1') selectWeapon(0);
-        else if (c === 'Digit2') selectWeapon(1);
-        else if (c === 'Digit3') selectWeapon(2);
-        else if (c === 'Digit4') selectWeapon(3);
-        else if (c === 'KeyG') triggerReload();
-        else if (c === 'KeyR') cycleRadio();
-        else if (c === 'KeyM') toggleMission();
-        else if (c === 'Space' && !state.player.car) triggerDodge();
+        if (code === 'KeyF' || code === 'KeyE') tryEnterOrExitCar();
+        else if (code === 'KeyQ') cycleWeapon();
+        else if (code === 'Digit1') selectWeapon(0);
+        else if (code === 'Digit2') selectWeapon(1);
+        else if (code === 'Digit3') selectWeapon(2);
+        else if (code === 'Digit4') selectWeapon(3);
+        else if (code === 'KeyR') cycleRadio();
+        else if (code === 'KeyM') toggleMission();
+        else if (code === 'KeyG') triggerReload();
+        else if (code === 'KeyC' && !state.player.car) state.player.crouchCover = !state.player.crouchCover;
+        else if (code === 'KeyH' && state.player.car) sound.playHorn();
+        else if (code === 'KeyL' && state.player.car) state.player.car.headlights = !state.player.car.headlights;
+        else if (code === 'Space' && !state.player.car) triggerDodge();
       }
-      keys.add(c);
+      keys.add(code);
     }, { passive: false });
 
     window.addEventListener('keyup', e => keys.delete(e.code));
@@ -1180,68 +1552,127 @@
     canvas.addEventListener('pointerdown', e => {
       canvas.focus();
       sound.unlock();
-      if (e.pointerType === 'touch') { touchState.active = true; detectTouchUI(); return; }
-      if (e.button === 0) { mouse.x = e.clientX; mouse.y = e.clientY; mouse.down = true; }
+      if (e.pointerType === 'touch') {
+        touchState.active = true;
+        detectTouchUI();
+        return;
+      }
+      if (e.button === 0) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.down = true;
+      }
     });
-    window.addEventListener('pointermove', e => { if (e.pointerType !== 'touch') { mouse.x = e.clientX; mouse.y = e.clientY; } });
-    window.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') mouse.down = false; });
+
+    window.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'touch') {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      }
+    });
+
+    window.addEventListener('pointerup', e => {
+      if (e.pointerType !== 'touch') mouse.down = false;
+    });
 
     const joyZone = document.getElementById('joy-zone');
     const joyKnob = document.getElementById('joy-knob');
-    let joyId = null;
-    function updateJoy(cx, cy) {
-      const r = joyZone.getBoundingClientRect();
-      const mx = r.left + r.width / 2, my = r.top + r.height / 2, maxR = r.width * 0.42;
-      let dx = cx - mx, dy = cy - my;
-      const d = Math.hypot(dx, dy);
-      if (d > maxR) { dx = (dx / d) * maxR; dy = (dy / d) * maxR; }
-      joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-      touchState.joyX = dx / maxR; touchState.joyY = dy / maxR;
-    }
-    joyZone.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); sound.unlock(); touchState.active = true; joyId = e.pointerId; joyZone.setPointerCapture(e.pointerId); updateJoy(e.clientX, e.clientY); });
-    joyZone.addEventListener('pointermove', e => { if (e.pointerId === joyId) updateJoy(e.clientX, e.clientY); });
-    const endJoy = e => { if (e.pointerId === joyId) { joyId = null; touchState.joyX = 0; touchState.joyY = 0; joyKnob.style.transform = 'translate(0,0)'; } };
-    joyZone.addEventListener('pointerup', endJoy);
-    joyZone.addEventListener('pointercancel', endJoy);
+    let joyPointerId = null;
 
-    function bindHold(id, prop) {
-      const b = document.getElementById(id);
-      b.addEventListener('pointerdown', e => {
-        e.preventDefault(); e.stopPropagation(); sound.unlock();
-        touchState[prop] = true; b.classList.add('pressed');
+    function updateJoystick(clientX, clientY) {
+      const rect = joyZone.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const maxR = rect.width * 0.42;
+      let dx = clientX - cx;
+      let dy = clientY - cy;
+      const dist = Math.hypot(dx, dy);
+      if (dist > maxR) { dx = (dx / dist) * maxR; dy = (dy / dist) * maxR; }
+      joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+      touchState.joyX = dx / maxR;
+      touchState.joyY = dy / maxR;
+    }
+
+    joyZone.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      sound.unlock();
+      touchState.active = true;
+      joyPointerId = e.pointerId;
+      joyZone.setPointerCapture(e.pointerId);
+      updateJoystick(e.clientX, e.clientY);
+    });
+
+    joyZone.addEventListener('pointermove', e => {
+      if (e.pointerId === joyPointerId) updateJoystick(e.clientX, e.clientY);
+    });
+
+    function resetJoy(e) {
+      if (e.pointerId === joyPointerId) {
+        joyPointerId = null;
+        touchState.joyX = 0;
+        touchState.joyY = 0;
+        joyKnob.style.transform = 'translate(0px, 0px)';
+      }
+    }
+    joyZone.addEventListener('pointerup', resetJoy);
+    joyZone.addEventListener('pointercancel', resetJoy);
+
+    function bindHoldButton(id, prop) {
+      const btn = document.getElementById(id);
+      btn.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        sound.unlock();
+        touchState[prop] = true;
+        btn.classList.add('pressed');
         if (prop === 'drift' && state.player && !state.player.car) triggerDodge();
       });
-      const up = e => { e.preventDefault(); touchState[prop] = false; b.classList.remove('pressed'); };
-      b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+      const up = e => {
+        e.preventDefault();
+        touchState[prop] = false;
+        btn.classList.remove('pressed');
+      };
+      btn.addEventListener('pointerup', up);
+      btn.addEventListener('pointercancel', up);
     }
-    bindHold('tb-fire', 'fire');
-    bindHold('tb-drift', 'drift');
+    bindHoldButton('tb-fire', 'fire');
+    bindHoldButton('tb-drift', 'drift');
     document.getElementById('tb-car').addEventListener('click', e => { e.stopPropagation(); sound.unlock(); tryEnterOrExitCar(); });
-    document.getElementById('tb-weap').addEventListener('click', e => { e.stopPropagation(); sound.unlock(); selectWeapon((state.player.weaponIdx + 1) % WEAPONS.length); });
+    document.getElementById('tb-weap').addEventListener('click', e => { e.stopPropagation(); sound.unlock(); cycleWeapon(); });
 
-    // 7. ACTIONS, MISSIONS & WANTED LOGIC
-    function showBanner(txt, color = '#fff') {
+    // =========================================================================
+    // 7. GAMEPLAY ACTIONS: WEAPONS, VEHICLES, MISSIONS, WANTED LEVEL
+    // =========================================================================
+    function showBanner(text, color = '#ffffff') {
       const el = document.getElementById('big-banner');
-      el.textContent = txt; el.style.color = color; el.classList.add('show');
-      state.bannerTimer = 2.4;
+      el.textContent = text;
+      el.style.color = color;
+      el.classList.add('show');
+      state.bannerTimer = 2.6;
     }
 
-    function showRadioToast(txt) {
+    function showRadioToast(text) {
       const el = document.getElementById('radio-toast');
-      el.textContent = txt; el.classList.add('show');
+      el.textContent = text;
+      el.classList.add('show');
       clearTimeout(showRadioToast._t);
       showRadioToast._t = setTimeout(() => el.classList.remove('show'), 2200);
     }
 
-    function switchProtagonist() {
-      state.charIdx = (state.charIdx + 1) % CHARS.length;
-      showBanner(`PLAYING AS ${CHARS[state.charIdx].name}`, CHARS[state.charIdx].color);
-      updateHUD();
-    }
-
-    function cycleRadio() {
-      sound.stationIdx = (sound.stationIdx + 1) % STATIONS.length;
-      showRadioToast('RADIO: ' + STATIONS[sound.stationIdx].name);
+    function addWantedHeat(amount) {
+      const prevStars = state.wantedStars;
+      state.wantedHeat = Math.min(100, state.wantedHeat + amount);
+      state.wantedEvadeTimer = 0;
+      const s = state.wantedHeat >= 85 ? 5 : state.wantedHeat >= 62 ? 4 : state.wantedHeat >= 40 ? 3 : state.wantedHeat >= 22 ? 2 : state.wantedHeat >= 8 ? 1 : 0;
+      state.wantedStars = Math.max(state.wantedStars, s);
+      if (state.wantedStars > saveData.bestStars) {
+        saveData.bestStars = state.wantedStars;
+        persistSave();
+      }
+      if (state.wantedStars > prevStars && state.wantedStars >= 1) {
+        showBanner(`WANTED LEVEL ${state.wantedStars} ★`, '#facc15');
+      }
     }
 
     function selectWeapon(idx) {
@@ -1251,43 +1682,50 @@
       updateHUD();
     }
 
+    function cycleWeapon() {
+      if (!state.player) return;
+      selectWeapon((state.player.weaponIdx + 1) % WEAPONS.length);
+    }
+
     function triggerReload() {
       const p = state.player;
       if (!p) return;
       const w = WEAPONS[p.weaponIdx];
       const maxMag = w.mag + (p.weaponIdx === 1 ? saveData.weaponLevel * 3 : p.weaponIdx === 2 ? saveData.weaponLevel * 6 : saveData.weaponLevel);
-      if (!w.melee && p.reloadTimer <= 0 && p.ammo[p.weaponIdx] < maxMag) p.reloadTimer = w.reload;
+      if (w.melee || p.reloadTimer > 0 || p.ammo[p.weaponIdx] >= maxMag) return;
+      p.reloadTimer = w.reload;
     }
 
     function triggerDodge() {
       const p = state.player;
-      if (!p |
-
-| p.car |
-| p.dodgeTimer > 0 |
-| p.dodgeCooldown > 0 |
-| p.stamina < 18) return;
-      p.stamina -= 18; p.dodgeTimer = 0.24; p.dodgeCooldown = 0.55;
-      p.vx = Math.cos(p.angle) * 420; p.vy = Math.sin(p.angle) * 420;
+      if (!p || p.car || p.dodgeTimer > 0 || p.dodgeCooldown > 0 || p.stamina < 18) return;
+      p.stamina -= 18;
+      p.dodgeTimer = 0.24;
+      p.dodgeCooldown = 0.55;
+      p.crouchCover = false;
+      let dx = 0, dy = 0;
+      if (keys.has('KeyW') || keys.has('ArrowUp')) dy -= 1;
+      if (keys.has('KeyS') || keys.has('ArrowDown')) dy += 1;
+      if (keys.has('KeyA') || keys.has('ArrowLeft')) dx -= 1;
+      if (keys.has('KeyD') || keys.has('ArrowRight')) dx += 1;
+      if (Math.hypot(touchState.joyX, touchState.joyY) > 0.2) { dx = touchState.joyX; dy = touchState.joyY; }
+      const len = Math.hypot(dx, dy);
+      if (len > 0.01) { p.vx = (dx / len) * 430; p.vy = (dy / len) * 430; }
+      else { p.vx = Math.cos(p.angle) * 430; p.vy = Math.sin(p.angle) * 430; }
     }
 
-    function addWantedHeat(amt) {
-      const prev = state.wantedStars;
-      state.wantedHeat = Math.min(100, state.wantedHeat + amt);
-      state.wantedEvadeTimer = 0;
-      const s = state.wantedHeat >= 85 ? 5 : state.wantedHeat >= 62 ? 4 : state.wantedHeat >= 40 ? 3 : state.wantedHeat >= 22 ? 2 : state.wantedHeat >= 8 ? 1 : 0;
-      state.wantedStars = Math.max(state.wantedStars, s);
-      if (state.wantedStars > saveData.bestStars) { saveData.bestStars = state.wantedStars; persistSave(); }
-      if (state.wantedStars > prev && state.wantedStars >= 1) showBanner(`VCPD HEAT ${state.wantedStars} ★`, '#ffbe0b');
+    function cycleRadio() {
+      sound.stationIdx = (sound.stationIdx + 1) % RADIO_STATIONS.length;
+      showRadioToast('RADIO: ' + RADIO_STATIONS[sound.stationIdx].name);
     }
 
-    function findNearestCar(maxD = 76) {
+    function findNearestCar(maxDist = 74) {
       const p = state.player;
-      let best = null, bd = maxD;
+      let best = null, bestD = maxDist;
       for (const c of state.cars) {
         if (c.wrecked) continue;
         const d = Math.hypot(c.x - p.x, c.y - p.y);
-        if (d < bd) { bd = d; best = c; }
+        if (d < bestD) { bestD = d; best = c; }
       }
       return best;
     }
@@ -1298,553 +1736,1001 @@
       if (p.car) {
         const c = p.car;
         const nx = -Math.sin(c.angle), ny = Math.cos(c.angle);
-        let ex = c.x - nx * 32, ey = c.y - ny * 32;
-        if (isInsideBuilding(ex, ey, 10) |
-
-| !onLand(ex, ey)) { ex = c.x + nx * 32; ey = c.y + ny * 32; }
-        p.x = ex; p.y = ey; p.vx = c.vx * 0.3; p.vy = c.vy * 0.3;
-        c.aiMode = 'none'; c.driver = false; p.car = null;
+        let ex = c.x - nx * 34, ey = c.y - ny * 34;
+        if (isInsideBuilding(ex, ey, 10) || isInsideWater(ex, ey)) {
+          ex = c.x + nx * 34; ey = c.y + ny * 34;
+        }
+        p.x = ex; p.y = ey;
+        p.vx = c.vx * 0.35; p.vy = c.vy * 0.35;
+        c.aiMode = 'none';
+        c.driver = false;
+        p.car = null;
         sound.playCrash(0.15);
         return;
       }
-      const car = findNearestCar(76);
+
+      const car = findNearestCar(78);
       if (!car) return;
       if (car.driver) {
-        state.peds.push({ x: car.x - Math.sin(car.angle) * 30, y: car.y + Math.cos(car.angle) * 30, angle: car.angle, hp: 45, speed: 95, fleeTimer: 5, shirt: '#cbd5e1' });
+        const ex = car.x - Math.sin(car.angle) * 32;
+        const ey = car.y + Math.cos(car.angle) * 32;
+        state.peds.push({
+          x: ex, y: ey, angle: car.angle + Math.PI / 2,
+          hp: 45, speed: 95, fleeTimer: 6, shirt: '#94a3b8'
+        });
         addWantedHeat(car.spec.isCop ? 24 : 11);
       }
-      car.aiMode = 'none'; car.driver = true; p.car = car; p.x = car.x; p.y = car.y;
+      car.aiMode = 'none';
+      car.driver = true;
+      car.headlights = true;
+      p.crouchCover = false;
+      p.car = car;
+      p.x = car.x; p.y = car.y;
       sound.playCrash(0.2);
     }
 
-    function toggleMission() {
-      if (state.mission) { state.mission = null; showBanner('CONTRACT CANCELLED', '#94a3b8'); return; }
-      const pick = saveData.missionsCleared % 4;
+    function startNextMission() {
       const p = state.player;
+      const pick = (saveData.missionsCleared % 4);
+      const randCoord = () => LAND_OFFSET + (1 + ((Math.random() * (GRID_BLOCKS - 2)) | 0)) * BLOCK_SIZE + ROAD_W / 2;
+
       if (pick === 0) {
-        state.mission = { type: 'checkpoint', title: 'GLORIANA KEYS RUN: CROSS CAUSEWAY', tx: 3400, ty: 5450, timer: 55, reward: 650 };
+        let tx = randCoord(), ty = randCoord();
+        while (Math.hypot(tx - p.x, ty - p.y) < 1100) { tx = randCoord(); ty = randCoord(); }
+        state.mission = { type: 'checkpoint', title: 'BROKER RUN: REACH THE DROP ZONE', tx, ty, timer: 42, reward: 450, phase: 0 };
       } else if (pick === 1) {
-        state.mission = { type: 'checkpoint', title: 'OCEAN DRIVE SPRINT: NORTH BEACH', tx: 4410, ty: 950, timer: 42, reward: 550 };
+        let ax = randCoord(), ay = randCoord();
+        while (Math.hypot(ax - p.x, ay - p.y) < 800) { ax = randCoord(); ay = randCoord(); }
+        state.mission = { type: 'courier', title: 'MIDNIGHT COURIER: PICK UP PACKAGE', tx: ax, ty: ay, bx: randCoord(), by: randCoord(), timer: 68, reward: 850, phase: 0 };
       } else if (pick === 2) {
         addWantedHeat(45);
-        state.mission = { type: 'survive', title: 'VICE HEAT: SURVIVE VCPD PURSUIT', tx: p.x, ty: p.y, timer: 28, reward: 1100 };
+        state.mission = { type: 'survive', title: 'HEAT SURVIVAL: OUTLAST THE LCPD', tx: p.x, ty: p.y, timer: 30, reward: 1150, phase: 0 };
       } else {
         const targets = [];
         for (let i = 0; i < 3; i++) {
-          const c = spawnCar(1900 + i * 320, 2400 + i * 240, 0, 'gator', 'target');
-          c.hp = 150; c.maxHp = 150; state.cars.push(c); targets.push(c);
+          const c = spawnCar(randCoord(), randCoord(), 0, 'suv', 'target');
+          c.hp = 160; c.maxHp = 160;
+          state.cars.push(c);
+          targets.push(c);
         }
-        state.mission = { type: 'sweep', title: 'CARTEL SWEEP: WRECK 3 GATOR 4x4s', targets, tx: targets[0].x, ty: targets[0].y, timer: 85, reward: 1500 };
+        state.mission = { type: 'sweep', title: 'TURF SWEEP: WRECK 3 SYNDICATE SUVs', targets, timer: 90, reward: 1500, phase: 0 };
       }
-      showBanner('LEONIDA CONTRACT STARTED', '#ff4ecd');
+      showBanner('CONTRACT STARTED', '#f7b731');
     }
 
-    function spawnParticles(x, y, count, color, speed = 120, life = 0.4, size = 3) {
+    function toggleMission() {
+      if (!state.mission) startNextMission();
+      else { state.mission = null; showBanner('CONTRACT CANCELLED', '#94a3b8'); }
+    }
+
+    function completeMission() {
+      const reward = state.mission.reward;
+      saveData.cash += reward;
+      saveData.missionsCleared += 1;
+      persistSave();
+      sound.playPickup();
+      showBanner(`CONTRACT PASSED +$${reward}`, '#4ade80');
+      state.mission = null;
+    }
+
+    // =========================================================================
+    // 8. COMBAT, MELEE COMBO, COVER & EXPLOSIONS
+    // =========================================================================
+    function spawnParticles(x, y, count, color, speed = 120, life = 0.45, size = 3) {
       for (let i = 0; i < count; i++) {
-        const a = Math.random() * Math.PI * 2, s = (0.3 + Math.random() * 0.7) * speed;
-        state.particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life, maxLife: life, color, size });
+        const a = Math.random() * Math.PI * 2;
+        const s = (0.3 + Math.random() * 0.7) * speed;
+        state.particles.push({
+          x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+          life, maxLife: life, color, size: size * (0.7 + Math.random() * 0.6)
+        });
       }
     }
 
     function explodeCar(car) {
       if (car.wrecked) return;
-      car.wrecked = true; car.hp = 0; car.driver = false; car.aiMode = 'none'; car.wreckTimer = 9;
+      car.wrecked = true;
+      car.hp = 0;
+      car.driver = false;
+      car.aiMode = 'none';
+      car.wreckTimer = 10;
+      saveData.wrecks += 1;
+      persistSave();
+
       sound.playExplosion();
-      state.cam.shake = Math.max(state.cam.shake, 16);
-      spawnParticles(car.x, car.y, 32, '#fb923c', 250, 0.65, 6);
+      state.cam.shake = Math.max(state.cam.shake, 18);
+      spawnParticles(car.x, car.y, 34, '#fb923c', 260, 0.7, 7);
+      spawnParticles(car.x, car.y, 20, '#facc15', 180, 0.5, 5);
       addWantedHeat(22);
-      if (state.player.car === car) { tryEnterOrExitCar(); damagePlayer(70, false); }
-    }
 
-    function damagePlayer(dmg, fromCop) {
       const p = state.player;
-      if (!p |
-
-| p.dodgeTimer > 0 |
-| state.screen !== 'playing') return;
-      state.cam.shake = Math.max(state.cam.shake, 6);
-      if (p.armor > 0) { const ab = Math.min(p.armor, dmg * 0.75); p.armor -= ab; dmg -= ab; }
-      p.hp = Math.max(0, p.hp - dmg);
-      if (p.hp <= 0) {
-        state.screen = 'wasted';
-        mouse.down = false; touchState.fire = false;
-        const fee = Math.min(saveData.cash, 100);
-        saveData.cash -= fee; persistSave();
-        document.getElementById('wasted-title').textContent = (fromCop && state.wantedStars > 0) ? 'BUSTED' : 'WASTED';
-        document.getElementById('wasted-sub').textContent = `Vice Hospital / Bail cost $${fee}. Upgrades & bankroll saved.`;
-        document.getElementById('wasted-screen').classList.remove('hidden');
+      if (p.car === car) {
+        tryEnterOrExitCar();
+        damagePlayer(75, false);
+      } else {
+        const dp = Math.hypot(p.x - car.x, p.y - car.y);
+        if (dp < 150) damagePlayer(Math.round((1 - dp / 150) * 65), false);
       }
+
+      for (const ped of state.peds) if (Math.hypot(ped.x - car.x, ped.y - car.y) < 140) ped.hp = 0;
+      for (const cop of state.cops) if (Math.hypot(cop.x - car.x, cop.y - car.y) < 140) cop.hp = 0;
     }
 
-    function fireWeapon() {
-      const p = state.player, w = WEAPONS[p.weaponIdx], ch = CHARS[state.charIdx];
-      if (p.fireTimer > 0 |
+    function damagePlayer(dmg, fromCop = false) {
+      const p = state.player;
+      if (!p || p.dodgeTimer > 0 || state.screen !== 'playing') return;
+      if (!p.car && p.inCover) dmg *= 0.55;
+      state.cam.shake = Math.max(state.cam.shake, 6);
+      if (p.armor > 0) {
+        const absorb = Math.min(p.armor, dmg * 0.75);
+        p.armor -= absorb;
+        dmg -= absorb;
+      }
+      p.hp = Math.max(0, p.hp - dmg);
+      if (p.hp <= 0) triggerWasted(fromCop && state.wantedStars >= 1);
+    }
 
-| p.reloadTimer > 0 |
-| (p.car && w.melee)) return;
-      const mult = (1 + saveData.weaponLevel * 0.2) * ch.dmgBonus;
+    function triggerWasted(busted) {
+      state.screen = 'wasted';
+      mouse.down = false;
+      touchState.fire = false;
+      const fee = Math.min(saveData.cash, 100);
+      saveData.cash -= fee;
+      persistSave();
 
+      document.getElementById('wasted-title').textContent = busted ? 'BUSTED' : 'WASTED';
+      document.getElementById('wasted-sub').textContent = busted
+        ? `LCPD confiscated $${fee} in bail fines. Your upgrades remain intact.`
+        : `All Saints Hospital billed $${fee}. Your weapons and upgrades remain intact.`;
+      document.getElementById('wasted-cash').textContent = `$${saveData.cash}`;
+      document.getElementById('wasted-wrecks').textContent = `${saveData.wrecks}`;
+      document.getElementById('wasted-screen').classList.remove('hidden');
+    }
+
+    function firePlayerWeapon() {
+      const p = state.player;
+      const w = WEAPONS[p.weaponIdx];
+      if (p.fireTimer > 0 || p.reloadTimer > 0) return;
+      if (p.car && w.melee) return;
+
+      const dmgMult = 1 + saveData.weaponLevel * 0.2;
       if (w.melee) {
-        p.fireTimer = w.rate; p.swingAnim = 0.18;
-        sound.playCrash(0.18);
-        const hx = p.x + Math.cos(p.angle) * 26, hy = p.y + Math.sin(p.angle) * 26;
-        for (const ped of state.peds) if (Math.hypot(ped.x - hx, ped.y - hy) < 34) { ped.hp -= w.dmg * mult; ped.fleeTimer = 5; addWantedHeat(8); }
-        for (const cop of state.cops) if (Math.hypot(cop.x - hx, cop.y - hy) < 34) { cop.hp -= w.dmg * mult; addWantedHeat(15); }
+        p.comboStep = p.comboTimer > 0 ? (p.comboStep + 1) % 3 : 0;
+        p.comboTimer = 0.7;
+        const isKickFinisher = p.comboStep === 2;
+        p.fireTimer = isKickFinisher ? 0.42 : w.rate;
+        p.swingAnim = 0.20;
+        sound.playCrash(isKickFinisher ? 0.3 : 0.16);
+        const reach = isKickFinisher ? 34 : 26;
+        const hitDmg = w.dmg * dmgMult * (isKickFinisher ? 1.55 : 1);
+        const hx = p.x + Math.cos(p.angle) * reach;
+        const hy = p.y + Math.sin(p.angle) * reach;
+
+        for (const ped of state.peds) {
+          if (Math.hypot(ped.x - hx, ped.y - hy) < 34) {
+            ped.hp -= hitDmg;
+            ped.fleeTimer = 5;
+            state.hitMarkerTimer = 0.14;
+            sound.playHit(ped.hp <= 0);
+            spawnParticles(ped.x, ped.y, 6, '#ef4444', 90, 0.3, 3);
+            addWantedHeat(7);
+          }
+        }
+        for (const cop of state.cops) {
+          if (Math.hypot(cop.x - hx, cop.y - hy) < 34) {
+            cop.hp -= hitDmg;
+            state.hitMarkerTimer = 0.14;
+            sound.playHit(cop.hp <= 0);
+            addWantedHeat(16);
+          }
+        }
+        for (const pr of props) {
+          if (pr.type === 'crate' && !pr.broken && Math.hypot(pr.x - hx, pr.y - hy) < 36) pr.hp -= 40;
+        }
         return;
       }
 
       if (p.ammo[p.weaponIdx] <= 0) { triggerReload(); return; }
-      p.ammo[p.weaponIdx]--; p.fireTimer = w.rate;
+
+      p.ammo[p.weaponIdx] -= 1;
+      p.fireTimer = w.rate;
+      p.recoilBloom = Math.min(0.24, p.recoilBloom + w.recoil);
       sound.playShot(w.id);
-      const mx = p.x + Math.cos(p.angle) * 16, my = p.y + Math.sin(p.angle) * 16;
-      spawnParticles(mx, my, 4, '#ffbe0b', 100, 0.08, 3.5);
+      state.cam.shake = Math.max(state.cam.shake, w.id === 'shotgun' ? 6 : 2.4);
+
+      const mx = p.x + Math.cos(p.angle) * 18;
+      const my = p.y + Math.sin(p.angle) * 18;
+      spawnParticles(mx, my, 4, '#fde047', 110, 0.09, 4);
+
       for (let i = 0; i < w.pellets; i++) {
-        const ang = p.angle + (Math.random() - 0.5) * w.spread;
-        state.bullets.push({ x: mx, y: my, px: mx, py: my, vx: Math.cos(ang) * 1140, vy: Math.sin(ang) * 1140, life: w.range / 1140, dmg: w.dmg * mult, fromPlayer: true, color: w.color });
+        const ang = p.angle + (Math.random() - 0.5) * (w.spread + p.recoilBloom);
+        state.bullets.push({
+          x: mx, y: my, px: mx, py: my,
+          vx: Math.cos(ang) * 1150, vy: Math.sin(ang) * 1150,
+          life: w.range / 1150,
+          dmg: w.dmg * dmgMult,
+          fromPlayer: true, color: w.color
+        });
       }
-      addWantedHeat(3);
+      addWantedHeat(3.2);
       if (p.ammo[p.weaponIdx] === 0) triggerReload();
     }
 
-    // 8. VEHICLE PHYSICS & SIMULATION
-    function updateCarPhysics(c, throttle, steer, handbrake, dt) {
-      const fx = Math.cos(c.angle), fy = Math.sin(c.angle), rx = -fy, ry = fx;
-      let vFwd = c.vx * fx + c.vy * fy, vLat = c.vx * rx + c.vy * ry;
-      const tune = (state.player && state.player.car === c) ? (1 + saveData.tuneLevel * 0.12) * CHARS[state.charIdx].carHpBonus : 1;
-      const maxSpd = c.spec.maxSpd * tune, accel = c.spec.accel * tune;
+    // =========================================================================
+    // 9. PHYSICS & AI SIMULATION STEP
+    // =========================================================================
+    function updateVehiclePhysics(c, throttle, steer, handbrake, dt) {
+      const fx = Math.cos(c.angle), fy = Math.sin(c.angle);
+      const rx = -fy, ry = fx;
+
+      let vFwd = c.vx * fx + c.vy * fy;
+      let vLat = c.vx * rx + c.vy * ry;
+
+      const tuneBoost = (state.player && state.player.car === c) ? (1 + saveData.tuneLevel * 0.12) : 1;
+      const maxSpd = c.spec.maxSpd * tuneBoost;
+      const accel = c.spec.accel * tuneBoost;
+
       const speed = Math.hypot(c.vx, c.vy);
       const steerFactor = Math.min(1, speed / 90) * (1 - 0.25 * Math.min(1, speed / maxSpd));
-      c.angle += steer * (vFwd >= -5 ? 1 : -1) * c.spec.turn * steerFactor * (handbrake ? 1.35 : 1) * dt;
+      const steerDir = vFwd >= -5 ? 1 : -1;
+      const driftBoost = handbrake ? 1.35 : 1.0;
 
-      const nfx = Math.cos(c.angle), nfy = Math.sin(c.angle), nrx = -nfy, nry = nfx;
-      if (!handbrake) vFwd += throttle * accel * dt; else vFwd *= Math.exp(-1.2 * dt);
+      c.angle += steer * steerDir * c.spec.turn * steerFactor * driftBoost * dt;
+
+      const nfx = Math.cos(c.angle), nfy = Math.sin(c.angle);
+      const nrx = -nfy, nry = nfx;
+
+      if (!handbrake) vFwd += throttle * accel * dt;
+      else vFwd *= Math.exp(-1.2 * dt);
+
+      const latGrip = handbrake ? 2.4 : 9.5;
       vFwd *= Math.exp(-0.85 * dt);
-      vLat *= Math.exp(-(handbrake ? 2.4 : 9.5) * dt);
-      vFwd = Math.max(-maxSpd * 0.45, Math.min(maxSpd, vFwd));
-      c.vx = nfx * vFwd + nrx * vLat; c.vy = nfy * vFwd + nry * vLat;
+      vLat *= Math.exp(-latGrip * dt);
 
-      if (Math.abs(vLat) > 65 && speed > 110 && state.skids.length < 360) {
-        const bx = c.x - nfx * 16, by = c.y - nfy * 16;
-        state.skids.push({ x1: bx - nrx * 7, y1: by - nry * 7, x2: bx + nrx * 7, y2: by + nry * 7, alpha: 0.55 });
+      vFwd = Math.max(-maxSpd * 0.45, Math.min(maxSpd, vFwd));
+      c.vx = nfx * vFwd + nrx * vLat;
+      c.vy = nfy * vFwd + nry * vLat;
+
+      if (Math.abs(vLat) > 62 && speed > 110 && state.skids.length < 480) {
+        const backX = c.x - nfx * (c.spec.w * 0.36);
+        const backY = c.y - nfy * (c.spec.w * 0.36);
+        state.skids.push({
+          x1: backX - nrx * 7, y1: backY - nry * 7,
+          x2: backX + nrx * 7, y2: backY + nry * 7,
+          alpha: 0.55
+        });
+        if (Math.random() < 0.35) spawnParticles(backX, backY, 1, 'rgba(200,210,225,0.45)', 35, 0.35, 5);
       }
 
-      const pvx = c.vx, pvy = c.vy;
+      const prevVx = c.vx, prevVy = c.vy;
       c.x += c.vx * dt;
-      if (isInsideBuilding(c.x, c.y, 14) |
-
-| !onLand(c.x, c.y)) { c.x -= c.vx * dt; c.vx *= -0.4; }
+      if (isInsideBuilding(c.x, c.y, 14) || isInsideWater(c.x, c.y)) { c.x -= c.vx * dt; c.vx *= -0.38; }
       c.y += c.vy * dt;
-      if (isInsideBuilding(c.x, c.y, 14) |
+      if (isInsideBuilding(c.x, c.y, 14) || isInsideWater(c.x, c.y)) { c.y -= c.vy * dt; c.vy *= -0.38; }
 
-| !onLand(c.x, c.y)) { c.y -= c.vy * dt; c.vy *= -0.4; }
-
-      const imp = Math.hypot(c.vx - pvx, c.vy - pvy);
-      if (imp > 100) {
-        c.hp -= imp * 0.13;
-        if (state.player && state.player.car === c) sound.playCrash(Math.min(1, imp / 300));
+      const impact = Math.hypot(c.vx - prevVx, c.vy - prevVy);
+      if (impact > 95) {
+        c.hp -= impact * 0.14;
+        if (state.player && state.player.car === c) {
+          sound.playCrash(Math.min(1, impact / 320));
+          state.cam.shake = Math.max(state.cam.shake, Math.min(10, impact * 0.03));
+        }
+        spawnParticles(c.x, c.y, 6, '#facc15', 140, 0.25, 2.5);
       }
     }
 
     function stepSimulation(dt) {
-      const p = state.player, ch = CHARS[state.charIdx];
-      state.timeOfDay = (state.timeOfDay + dt / 200) % 1;
-      if (state.bannerTimer > 0) { state.bannerTimer -= dt; if (state.bannerTimer <= 0) document.getElementById('big-banner').classList.remove('show'); }
+      const p = state.player;
+      if (!p) return;
+
+      state.timeOfDay = (state.timeOfDay + dt / 210) % 1;
+      state.trafficClock += dt;
+      const lightCycle = state.trafficClock % 15;
+      const nsRed = lightCycle >= 7.5;
+      const ewRed = lightCycle < 7.5;
+
+      if (state.hitMarkerTimer > 0) state.hitMarkerTimer -= dt;
+      if (state.bannerTimer > 0) {
+        state.bannerTimer -= dt;
+        if (state.bannerTimer <= 0) document.getElementById('big-banner').classList.remove('show');
+      }
+
       if (p.fireTimer > 0) p.fireTimer -= dt;
       if (p.swingAnim > 0) p.swingAnim -= dt;
+      if (p.comboTimer > 0) p.comboTimer -= dt;
       if (p.dodgeCooldown > 0) p.dodgeCooldown -= dt;
+      p.recoilBloom = Math.max(0, p.recoilBloom - dt * 0.35);
+
       if (p.reloadTimer > 0) {
         p.reloadTimer -= dt;
-        if (p.reloadTimer <= 0) p.ammo[p.weaponIdx] = WEAPONS[p.weaponIdx].mag + saveData.weaponLevel * 2;
+        if (p.reloadTimer <= 0) {
+          const w = WEAPONS[p.weaponIdx];
+          p.ammo[p.weaponIdx] = w.mag + (p.weaponIdx === 1 ? saveData.weaponLevel * 3 : p.weaponIdx === 2 ? saveData.weaponLevel * 6 : saveData.weaponLevel);
+        }
       }
+
+      const wantFire = mouse.down || touchState.fire;
 
       if (p.car) {
+        p.inCover = false;
         const c = p.car;
-        let thr = 0, str = 0;
-        if (keys.has('KeyW') |
-
-| keys.has('ArrowUp')) thr += 1;
-        if (keys.has('KeyS') |
-
-| keys.has('ArrowDown')) thr -= 0.75;
-        if (keys.has('KeyA') |
-
-| keys.has('ArrowLeft')) str -= 1;
-        if (keys.has('KeyD') |
-
-| keys.has('ArrowRight')) str += 1;
-        if (Math.hypot(touchState.joyX, touchState.joyY) > 0.12) {
-          const ta = Math.atan2(touchState.joyY, touchState.joyX);
-          const diff = Math.atan2(Math.sin(ta - c.angle), Math.cos(ta - c.angle));
-          str = Math.max(-1, Math.min(1, diff * 1.8));
-          thr = Math.hypot(touchState.joyX, touchState.joyY);
+        let throttle = 0, steer = 0;
+        if (keys.has('KeyW') || keys.has('ArrowUp')) throttle += 1;
+        if (keys.has('KeyS') || keys.has('ArrowDown')) throttle -= 0.75;
+        if (keys.has('KeyA') || keys.has('ArrowLeft')) steer -= 1;
+        if (keys.has('KeyD') || keys.has('ArrowRight')) steer += 1;
+        if (Math.abs(touchState.joyX) > 0.1 || Math.abs(touchState.joyY) > 0.1) {
+          const joyMag = Math.hypot(touchState.joyX, touchState.joyY);
+          const targetAng = Math.atan2(touchState.joyY, touchState.joyX);
+          const diff = Math.atan2(Math.sin(targetAng - c.angle), Math.cos(targetAng - c.angle));
+          steer = Math.max(-1, Math.min(1, diff * 1.8));
+          throttle = joyMag > 0.2 ? joyMag : 0;
         }
-        updateCarPhysics(c, thr, str, keys.has('Space') |
-
-| touchState.drift, dt);
+        const handbrake = keys.has('Space') || touchState.drift;
+        updateVehiclePhysics(c, throttle, steer, handbrake, dt);
         p.x = c.x; p.y = c.y;
-        p.angle = touchState.active ? c.angle : Math.atan2(state.cam.y + (mouse.y - viewH / 2) - p.y, state.cam.x + (mouse.x - viewW / 2) - p.x);
-        if (mouse.down) fireWeapon();
-        sound.updateEngine(true, Math.min(1, Math.hypot(c.vx, c.vy) / c.spec.maxSpd));
+
+        if (touchState.active) p.angle = c.angle;
+        else p.angle = Math.atan2(state.cam.y + (mouse.y - viewH / 2) - p.y, state.cam.x + (mouse.x - viewW / 2) - p.x);
+
+        if (mouse.down) firePlayerWeapon();
+        const spdRatio = Math.min(1, Math.hypot(c.vx, c.vy) / c.spec.maxSpd);
+        sound.updateEngine(true, spdRatio, Math.abs(throttle));
       } else {
-        sound.updateEngine(false, 0);
-        if (p.dodgeTimer > 0) p.dodgeTimer -= dt;
-        else {
+        sound.updateEngine(false, 0, 0);
+        if (p.dodgeTimer > 0) {
+          p.dodgeTimer -= dt;
+        } else {
           let mx = 0, my = 0;
-          if (keys.has('KeyW') |
-
-| keys.has('ArrowUp')) my -= 1;
-          if (keys.has('KeyS') |
-
-| keys.has('ArrowDown')) my += 1;
-          if (keys.has('KeyA') |
-
-| keys.has('ArrowLeft')) mx -= 1;
-          if (keys.has('KeyD') |
-
-| keys.has('ArrowRight')) mx += 1;
+          if (keys.has('KeyW') || keys.has('ArrowUp')) my -= 1;
+          if (keys.has('KeyS') || keys.has('ArrowDown')) my += 1;
+          if (keys.has('KeyA') || keys.has('ArrowLeft')) mx -= 1;
+          if (keys.has('KeyD') || keys.has('ArrowRight')) mx += 1;
           if (Math.hypot(touchState.joyX, touchState.joyY) > 0.12) { mx = touchState.joyX; my = touchState.joyY; }
-          const ml = Math.hypot(mx, my);
-          const sprint = (keys.has('ShiftLeft') |
 
-| keys.has('ShiftRight') |
-| ml > 0.85) && ml > 0.1 && p.stamina > 2;
-          p.stamina = sprint ? Math.max(0, p.stamina - 25 * dt) : Math.min(100, p.stamina + 18 * dt);
-          const spd = (sprint ? 235 : 155) * ch.speedBonus;
-          if (ml > 0.05) { p.vx = (mx / Math.max(1, ml)) * spd; p.vy = (my / Math.max(1, ml)) * spd; }
-          else { p.vx *= Math.exp(-15 * dt); p.vy *= Math.exp(-15 * dt); }
+          const mLen = Math.hypot(mx, my);
+          const sprinting = !p.crouchCover && (keys.has('ShiftLeft') || keys.has('ShiftRight') || mLen > 0.85) && mLen > 0.1 && p.stamina > 2;
+          if (sprinting) p.stamina = Math.max(0, p.stamina - 26 * dt);
+          else p.stamina = Math.min(100, p.stamina + 18 * dt);
+
+          const moveSpd = p.crouchCover ? 92 : sprinting ? 235 : 155;
+          if (mLen > 0.05) {
+            const nx = mx / Math.max(1, mLen), ny = my / Math.max(1, mLen);
+            p.vx = nx * moveSpd; p.vy = ny * moveSpd;
+          } else {
+            p.vx *= Math.exp(-16 * dt); p.vy *= Math.exp(-16 * dt);
+          }
         }
-        p.x += p.vx * dt; if (isInsideBuilding(p.x, p.y, p.r) |
 
-| !onLand(p.x, p.y)) p.x -= p.vx * dt;
-        p.y += p.vy * dt; if (isInsideBuilding(p.x, p.y, p.r) |
+        p.x += p.vx * dt;
+        if (isInsideBuilding(p.x, p.y, p.r) || isInsideWater(p.x, p.y)) p.x -= p.vx * dt;
+        p.y += p.vy * dt;
+        if (isInsideBuilding(p.x, p.y, p.r) || isInsideWater(p.x, p.y)) p.y -= p.vy * dt;
 
-| !onLand(p.x, p.y)) p.y -= p.vy * dt;
-        p.angle = touchState.active ? (Math.hypot(p.vx, p.vy) > 15 ? Math.atan2(p.vy, p.vx) : p.angle) : Math.atan2(state.cam.y + (mouse.y - viewH / 2) - p.y, state.cam.x + (mouse.x - viewW / 2) - p.x);
-        if (mouse.down |
+        // Check cover near walls or parked cars
+        const nearWall = !!isInsideBuilding(p.x, p.y, 24);
+        const nearCarCover = state.cars.some(c => Math.hypot(c.x - p.x, c.y - p.y) < 38);
+        p.inCover = p.crouchCover || nearWall || nearCarCover;
 
-| touchState.fire) fireWeapon();
+        if (touchState.active) {
+          if (Math.hypot(p.vx, p.vy) > 20) p.angle = Math.atan2(p.vy, p.vx);
+        } else {
+          p.angle = Math.atan2(state.cam.y + (mouse.y - viewH / 2) - p.y, state.cam.x + (mouse.x - viewW / 2) - p.x);
+        }
+
+        if (wantFire) firePlayerWeapon();
       }
 
-      state.cam.x += (p.x + (p.car ? p.car.vx * 0.26 : 0) - state.cam.x) * (1 - Math.exp(-7 * dt));
-      state.cam.y += (p.y + (p.car ? p.car.vy * 0.26 : 0) - state.cam.y) * (1 - Math.exp(-7 * dt));
+      const lookX = p.car ? p.car.vx * 0.28 : 0;
+      const lookY = p.car ? p.car.vy * 0.28 : 0;
+      state.cam.x += (p.x + lookX - state.cam.x) * (1 - Math.exp(-7 * dt));
+      state.cam.y += (p.y + lookY - state.cam.y) * (1 - Math.exp(-7 * dt));
       state.cam.shake *= Math.exp(-10 * dt);
 
-      let trafficCount = 0, copCount = 0;
+      // Cars AI & Collisions
+      let activeTraffic = 0;
+      let activeCopCars = 0;
       for (let i = state.cars.length - 1; i >= 0; i--) {
         const c = state.cars[i];
-        const dP = Math.hypot(c.x - p.x, c.y - p.y);
-        if (c.wrecked) { c.wreckTimer -= dt; if (c.wreckTimer <= 0 && c !== p.car) state.cars.splice(i, 1); continue; }
+        const distP = Math.hypot(c.x - p.x, c.y - p.y);
+
+        if (c.wrecked) {
+          c.wreckTimer -= dt;
+          if (Math.random() < 0.25) spawnParticles(c.x, c.y, 1, '#334155', 30, 0.7, 7);
+          if (c.wreckTimer <= 0 && c !== p.car) state.cars.splice(i, 1);
+          continue;
+        }
+
+        if (c.hp < c.maxHp * 0.36) {
+          c.smokeTimer += dt;
+          if (c.smokeTimer > 0.08) {
+            c.smokeTimer = 0;
+            spawnParticles(c.x + Math.cos(c.angle) * 14, c.y + Math.sin(c.angle) * 14, 1, '#475569', 35, 0.65, 6);
+          }
+        }
         if (c.hp <= 0) { explodeCar(c); continue; }
-        if (c !== p.car && c.aiMode !== 'target' && dP > 2100) { state.cars.splice(i, 1); continue; }
+        if (c !== p.car && c.aiMode !== 'target' && distP > 2100) { state.cars.splice(i, 1); continue; }
 
         if (c.aiMode === 'traffic') {
-          trafficCount++;
+          activeTraffic++;
           if (c.turnCooldown > 0) c.turnCooldown -= dt;
-          const ta = c.aiDir * (Math.PI / 2);
-          const diff = Math.atan2(Math.sin(ta - c.angle), Math.cos(ta - c.angle));
-          updateCarPhysics(c, Math.hypot(c.vx, c.vy) < c.aiSpeed ? 0.65 : 0, Math.max(-1, Math.min(1, diff * 2)), false, dt);
-          if (c.turnCooldown <= 0 && Math.random() < dt * 0.35) { c.turnCooldown = 2.5; c.aiDir = (c.aiDir + (Math.random() < 0.5 ? 1 : 3)) & 3; }
+          if (c.panicTimer > 0) c.panicTimer -= dt;
+
+          let stopForLight = false;
+          const relX = (c.x - LAND_OFFSET - ROAD_W / 2) % BLOCK_SIZE;
+          const relY = (c.y - LAND_OFFSET - ROAD_W / 2) % BLOCK_SIZE;
+          const nearX = Math.min(Math.abs(relX), BLOCK_SIZE - Math.abs(relX));
+          const nearY = Math.min(Math.abs(relY), BLOCK_SIZE - Math.abs(relY));
+
+          if (nearX < 36 && nearY < 36 && c.turnCooldown <= 0) {
+            c.turnCooldown = 1.8;
+            if (Math.random() < 0.35) c.aiDir = (c.aiDir + (Math.random() < 0.5 ? 1 : 3)) & 3;
+          } else if (c.panicTimer <= 0) {
+            const horiz = (c.aiDir === 0 || c.aiDir === 2);
+            if (horiz && ewRed && nearX > 50 && nearX < 90) stopForLight = true;
+            if (!horiz && nsRed && nearY > 50 && nearY < 90) stopForLight = true;
+          }
+
+          let blocked = false;
+          let swerve = 0;
+          const fx = Math.cos(c.angle), fy = Math.sin(c.angle);
+          for (const other of state.cars) {
+            if (other === c) continue;
+            const dx = other.x - c.x, dy = other.y - c.y;
+            const fwd = dx * fx + dy * fy;
+            const lat = -dx * fy + dy * fx;
+            if (fwd > 0 && fwd < 90 && Math.abs(lat) < 28) {
+              if (other.wrecked || c.panicTimer > 0) swerve = lat >= 0 ? -0.65 : 0.65;
+              else blocked = true;
+              break;
+            }
+          }
+
+          const targetAng = c.aiDir * (Math.PI / 2);
+          const diff = Math.atan2(Math.sin(targetAng - c.angle), Math.cos(targetAng - c.angle));
+          const steer = Math.max(-1, Math.min(1, diff * 2.5 + swerve));
+          const spd = Math.hypot(c.vx, c.vy);
+          const desiredSpd = (stopForLight || blocked) ? 0 : (c.panicTimer > 0 ? 340 : c.aiSpeed);
+          const throttle = spd < desiredSpd ? 0.72 : (desiredSpd === 0 && spd > 15 ? -0.4 : 0);
+          updateVehiclePhysics(c, throttle, steer, false, dt);
         } else if (c.aiMode === 'cop') {
-          copCount++;
-          if (state.wantedStars === 0) c.aiMode = 'traffic';
-          else {
+          activeCopCars++;
+          if (state.wantedStars === 0) {
+            c.aiMode = 'traffic';
+          } else {
             const toP = Math.atan2(p.y - c.y, p.x - c.x);
             const diff = Math.atan2(Math.sin(toP - c.angle), Math.cos(toP - c.angle));
-            updateCarPhysics(c, dP > 130 ? 0.9 : -0.2, Math.max(-1, Math.min(1, diff * 2.2)), Math.abs(diff) > 0.9, dt);
-            if (!p.car && dP < 160 && state.cops.length < 4 + state.wantedStars) {
-              c.aiMode = 'none'; c.driver = false;
-              state.cops.push({ x: c.x + 26, y: c.y, angle: toP, hp: 65, fireTimer: 0.6 });
+            const steer = Math.max(-1, Math.min(1, diff * 2.4));
+            const throttle = distP > 130 ? 0.92 : -0.2;
+            updateVehiclePhysics(c, throttle, steer, Math.abs(diff) > 0.9, dt);
+
+            if (!p.car && distP < 165 && state.cops.length < 4 + state.wantedStars) {
+              c.aiMode = 'none';
+              c.driver = false;
+              state.cops.push({ x: c.x + 28, y: c.y, angle: toP, hp: 65, fireTimer: 0.6 });
             }
           }
         } else if (c.aiMode === 'target') {
           const toP = Math.atan2(p.y - c.y, p.x - c.x);
-          updateCarPhysics(c, 0.5, Math.sin(toP + 0.8 - c.angle), false, dt);
+          const diff = Math.atan2(Math.sin(toP + 0.8 - c.angle), Math.cos(toP + 0.8 - c.angle));
+          updateVehiclePhysics(c, 0.55, Math.max(-1, Math.min(1, diff * 2)), false, dt);
         } else if (c !== p.car) {
-          updateCarPhysics(c, 0, 0, false, dt);
+          updateVehiclePhysics(c, 0, 0, false, dt);
+        }
+
+        const cSpd = Math.hypot(c.vx, c.vy);
+        for (let j = i - 1; j >= 0; j--) {
+          const o = state.cars[j];
+          if (o.wrecked) continue;
+          const dx = o.x - c.x, dy = o.y - c.y;
+          const d = Math.hypot(dx, dy);
+          if (d > 0.1 && d < 34) {
+            const nx = dx / d, ny = dy / d;
+            const overlap = (34 - d) * 0.5;
+            c.x -= nx * overlap; c.y -= ny * overlap;
+            o.x += nx * overlap; o.y += ny * overlap;
+            const relV = Math.hypot(c.vx - o.vx, c.vy - o.vy);
+            const tmpVx = c.vx, tmpVy = c.vy;
+            c.vx = o.vx * 0.75 + tmpVx * 0.25; c.vy = o.vy * 0.75 + tmpVy * 0.25;
+            o.vx = tmpVx * 0.75 + o.vx * 0.25; o.vy = tmpVy * 0.75 + o.vy * 0.25;
+            if (relV > 120) {
+              c.hp -= relV * 0.08; o.hp -= relV * 0.08;
+              if (c === p.car || o === p.car) sound.playCrash(Math.min(1, relV / 340));
+              spawnParticles((c.x + o.x) / 2, (c.y + o.y) / 2, 5, '#facc15', 110, 0.2, 2.5);
+            }
+          }
+        }
+
+        if (c !== p.car && !p.car && cSpd > 85 && distP < 26) {
+          damagePlayer(Math.min(35, cSpd * 0.12), c.spec.isCop);
+          p.vx += c.vx * 0.7; p.vy += c.vy * 0.7;
         }
       }
-      if (trafficCount < 18) spawnTraffic(false);
 
-      if (state.wantedStars > 0 && copCount < state.wantedStars && Math.random() < dt * 1.2) {
-        const a = Math.random() * Math.PI * 2;
-        const sx = p.x + Math.cos(a) * 720, sy = p.y + Math.sin(a) * 720;
-        if (onLand(sx, sy) && !isInsideBuilding(sx, sy, 20)) state.cars.push(spawnCar(sx, sy, a + Math.PI, 'police', 'cop'));
+      if (activeTraffic < 22) spawnTrafficNearPlayer(false);
+
+      const desiredCops = state.wantedStars > 0 ? Math.min(5, state.wantedStars) : 0;
+      if (activeCopCars < desiredCops && Math.random() < dt * 1.4) {
+        const ang = Math.random() * Math.PI * 2;
+        const sx = Math.max(LAND_OFFSET + 80, Math.min(LAND_OFFSET + LAND_SIZE - 80, p.x + Math.cos(ang) * 760));
+        const sy = Math.max(LAND_OFFSET + 80, Math.min(LAND_OFFSET + LAND_SIZE - 80, p.y + Math.sin(ang) * 760));
+        if (!isInsideBuilding(sx, sy, 20)) state.cars.push(spawnCar(sx, sy, ang + Math.PI, 'police', 'cop'));
       }
 
+      // Pedestrians
       for (let i = state.peds.length - 1; i >= 0; i--) {
         const ped = state.peds[i];
         const d = Math.hypot(ped.x - p.x, ped.y - p.y);
-        if (ped.hp <= 0) { state.pickups.push({ x: ped.x, y: ped.y, kind: 'cash' }); state.peds.splice(i, 1); continue; }
-        if (d > 1400) { state.peds.splice(i, 1); continue; }
-        if (p.car && Math.hypot(p.car.vx, p.car.vy) > 95 && d < 24) { ped.hp = 0; addWantedHeat(10); continue; }
-        if (ped.fleeTimer > 0) { ped.fleeTimer -= dt; ped.angle = Math.atan2(ped.y - p.y, ped.x - p.x); }
-        const nx = ped.x + Math.cos(ped.angle) * (ped.fleeTimer > 0 ? 110 : ped.speed) * dt;
-        const ny = ped.y + Math.sin(ped.angle) * (ped.fleeTimer > 0 ? 110 : ped.speed) * dt;
-        if (!onLand(nx, ny) |
-
-| isInsideBuilding(nx, ny, 8)) ped.angle += Math.PI * 0.7;
+        if (ped.hp <= 0) {
+          spawnParticles(ped.x, ped.y, 10, '#ef4444', 100, 0.35, 3);
+          state.pickups.push({ x: ped.x, y: ped.y, kind: 'cash', bob: 0 });
+          state.peds.splice(i, 1);
+          continue;
+        }
+        if (d > 1500) { state.peds.splice(i, 1); continue; }
+        if (p.car && Math.hypot(p.car.vx, p.car.vy) > 95 && d < 25) {
+          ped.hp = 0;
+          addWantedHeat(10);
+          sound.playHit(true);
+          continue;
+        }
+        if (ped.fleeTimer > 0) {
+          ped.fleeTimer -= dt;
+          ped.angle = Math.atan2(ped.y - p.y, ped.x - p.x);
+        } else if (Math.random() < dt * 0.4) {
+          ped.angle += (Math.random() - 0.5) * 1.8;
+        }
+        const spd = ped.fleeTimer > 0 ? 115 : ped.speed;
+        const nx = ped.x + Math.cos(ped.angle) * spd * dt;
+        const ny = ped.y + Math.sin(ped.angle) * spd * dt;
+        if (isInsideBuilding(nx, ny, 8) || isInsideWater(nx, ny)) ped.angle += Math.PI * 0.65;
         else { ped.x = nx; ped.y = ny; }
       }
-      if (state.peds.length < 24) spawnPed(false);
+      if (state.peds.length < 30) spawnPedNearPlayer(false);
 
-      let sees = false;
+      // Police Foot Units & Line-of-Sight Wanted Evasion
+      let copSeesPlayer = false;
       for (let i = state.cops.length - 1; i >= 0; i--) {
         const cop = state.cops[i];
-        if (cop.hp <= 0 |
-
-| state.wantedStars === 0) { state.cops.splice(i, 1); continue; }
+        if (cop.hp <= 0) {
+          spawnParticles(cop.x, cop.y, 12, '#3b82f6', 110, 0.35, 3);
+          state.pickups.push({ x: cop.x, y: cop.y, kind: 'armor', bob: 0 });
+          state.cops.splice(i, 1);
+          continue;
+        }
         const d = Math.hypot(p.x - cop.x, p.y - cop.y);
-        const los = d < 520 && hasLOS(cop.x, cop.y, p.x, p.y);
-        if (los) sees = true;
+        if (d > 1400 || state.wantedStars === 0) { state.cops.splice(i, 1); continue; }
+        const los = d < 540 && hasLineOfSight(cop.x, cop.y, p.x, p.y);
+        if (los) copSeesPlayer = true;
+
         cop.angle = Math.atan2(p.y - cop.y, p.x - cop.x);
-        if (d > 150) {
-          const nx = cop.x + Math.cos(cop.angle) * 120 * dt, ny = cop.y + Math.sin(cop.angle) * 120 * dt;
+        if (d > 155) {
+          const nx = cop.x + Math.cos(cop.angle) * 125 * dt;
+          const ny = cop.y + Math.sin(cop.angle) * 125 * dt;
           if (!isInsideBuilding(nx, ny, 10)) { cop.x = nx; cop.y = ny; }
         }
         cop.fireTimer -= dt;
-        if (cop.fireTimer <= 0 && los && d < 400) {
-          cop.fireTimer = 1.0;
-          state.bullets.push({ x: cop.x, y: cop.y, px: cop.x, py: cop.y, vx: Math.cos(cop.angle) * 740, vy: Math.sin(cop.angle) * 740, life: 0.65, dmg: 10 + state.wantedStars * 2, fromPlayer: false, color: '#60a5fa' });
+        if (cop.fireTimer <= 0 && los && d < 420) {
+          cop.fireTimer = Math.max(0.45, 1.2 - state.wantedStars * 0.14);
+          const ang = cop.angle + (Math.random() - 0.5) * 0.18;
+          state.bullets.push({
+            x: cop.x, y: cop.y, px: cop.x, py: cop.y,
+            vx: Math.cos(ang) * 760, vy: Math.sin(ang) * 760,
+            life: 0.65, dmg: 9 + state.wantedStars * 2, fromPlayer: false, color: '#60a5fa'
+          });
+          sound.playShot('pistol');
         }
       }
 
       if (state.wantedStars > 0) {
-        const carSees = state.cars.some(c => c.aiMode === 'cop' && Math.hypot(c.x - p.x, c.y - p.y) < 540 && hasLOS(c.x, c.y, p.x, p.y));
-        if (!sees && !carSees) {
+        const cruiserSees = state.cars.some(c =>
+          c.aiMode === 'cop' && Math.hypot(c.x - p.x, c.y - p.y) < 560 && hasLineOfSight(c.x, c.y, p.x, p.y)
+        );
+        if (!copSeesPlayer && !cruiserSees) {
           state.wantedEvadeTimer += dt;
-          if (state.wantedEvadeTimer >= 7 + state.wantedStars * 2) {
-            state.wantedStars = 0; state.wantedHeat = 0; state.wantedEvadeTimer = 0;
-            showBanner('HEAT EVADED', '#00f5d4');
+          if (state.wantedEvadeTimer >= 7 + state.wantedStars * 2.2) {
+            state.wantedStars = 0;
+            state.wantedHeat = 0;
+            state.wantedEvadeTimer = 0;
+            showBanner('WANTED EVADED', '#38bdf8');
           }
-        } else state.wantedEvadeTimer = Math.max(0, state.wantedEvadeTimer - dt * 0.6);
+        } else {
+          state.wantedEvadeTimer = Math.max(0, state.wantedEvadeTimer - dt * 0.7);
+        }
       }
 
+      // Bullets
       for (let i = state.bullets.length - 1; i >= 0; i--) {
         const b = state.bullets[i];
-        b.px = b.x; b.py = b.y; b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt;
-        if (b.life <= 0 |
+        b.px = b.x; b.py = b.y;
+        b.x += b.vx * dt; b.y += b.vy * dt;
+        b.life -= dt;
+        if (b.life <= 0 || isInsideBuilding(b.x, b.y, 0)) {
+          spawnParticles(b.x, b.y, 3, '#cbd5e1', 70, 0.15, 2);
+          state.bullets.splice(i, 1);
+          continue;
+        }
 
-| isInsideBuilding(b.x, b.y, 0)) { state.bullets.splice(i, 1); continue; }
         let hit = false;
         if (b.fromPlayer) {
-          for (const c of state.cars) if (c !== p.car && !c.wrecked && Math.hypot(c.x - b.x, c.y - b.y) < 24) { c.hp -= b.dmg; hit = true; if (c.spec.isCop) addWantedHeat(10); break; }
-          if (!hit) for (const ped of state.peds) if (Math.hypot(ped.x - b.x, ped.y - b.y) < 15) { ped.hp -= b.dmg; ped.fleeTimer = 5; addWantedHeat(8); hit = true; break; }
-          if (!hit) for (const cop of state.cops) if (Math.hypot(cop.x - b.x, cop.y - b.y) < 16) { cop.hp -= b.dmg; addWantedHeat(14); hit = true; break; }
-        } else if (Math.hypot(p.x - b.x, p.y - b.y) < (p.car ? 22 : 14)) {
-          damagePlayer(b.dmg, true); hit = true;
+          for (const c of state.cars) {
+            if (c === p.car || c.wrecked) continue;
+            if (Math.hypot(c.x - b.x, c.y - b.y) < 24) {
+              c.hp -= b.dmg; c.panicTimer = 4;
+              if (c.spec.isCop) addWantedHeat(10);
+              state.hitMarkerTimer = 0.12;
+              sound.playHit(c.hp <= 0);
+              spawnParticles(b.x, b.y, 4, '#facc15', 110, 0.2, 2.5);
+              hit = true; break;
+            }
+          }
+          if (!hit) {
+            for (const ped of state.peds) {
+              if (Math.hypot(ped.x - b.x, ped.y - b.y) < 15) {
+                ped.hp -= b.dmg; ped.fleeTimer = 5;
+                state.hitMarkerTimer = 0.12;
+                sound.playHit(ped.hp <= 0);
+                addWantedHeat(8);
+                hit = true; break;
+              }
+            }
+          }
+          if (!hit) {
+            for (const cop of state.cops) {
+              if (Math.hypot(cop.x - b.x, cop.y - b.y) < 16) {
+                cop.hp -= b.dmg;
+                state.hitMarkerTimer = 0.12;
+                sound.playHit(cop.hp <= 0);
+                addWantedHeat(14);
+                hit = true; break;
+              }
+            }
+          }
+          if (!hit) {
+            for (const pr of props) {
+              if (!pr.broken && pr.type !== 'tree' && Math.hypot(pr.x - b.x, pr.y - b.y) < 16) {
+                pr.hp -= b.dmg; hit = true; break;
+              }
+            }
+          }
+        } else {
+          if (p.car) {
+            if (Math.hypot(p.car.x - b.x, p.car.y - b.y) < 22) {
+              p.car.hp -= b.dmg * 0.7;
+              damagePlayer(b.dmg * 0.3, true);
+              hit = true;
+            }
+          } else if (Math.hypot(p.x - b.x, p.y - b.y) < 14) {
+            damagePlayer(b.dmg, true);
+            hit = true;
+          }
         }
         if (hit) state.bullets.splice(i, 1);
       }
 
+      // Props
+      for (const pr of props) {
+        if (pr.type === 'tree') continue;
+        if (!pr.broken && p.car && Math.hypot(p.car.x - pr.x, p.car.y - pr.y) < 24 && Math.hypot(p.car.vx, p.car.vy) > 70) pr.hp = 0;
+        if (!pr.broken && pr.hp <= 0) {
+          pr.broken = true; pr.timer = 4.5;
+          if (pr.type === 'lamp') spawnParticles(pr.x, pr.y, 12, '#fde047', 140, 0.4, 3);
+          if (pr.type === 'crate') {
+            spawnParticles(pr.x, pr.y, 10, '#b45309', 120, 0.4, 4);
+            state.pickups.push({ x: pr.x, y: pr.y, kind: Math.random() < 0.5 ? 'cash' : 'hp', bob: 0 });
+          }
+        }
+        if (pr.broken && pr.type === 'hydrant' && pr.timer > 0) {
+          pr.timer -= dt;
+          if (Math.random() < 0.45) spawnParticles(pr.x, pr.y, 2, '#38bdf8', 95, 0.35, 3.5);
+        }
+      }
+
+      // Pickups
       for (let i = state.pickups.length - 1; i >= 0; i--) {
         const pk = state.pickups[i];
+        pk.bob += dt * 4;
         if (Math.hypot(pk.x - p.x, pk.y - p.y) < 28) {
-          saveData.cash += 35; persistSave(); sound.playPickup(); state.pickups.splice(i, 1);
+          if (pk.kind === 'cash') {
+            saveData.cash += 25 + ((Math.random() * 35) | 0);
+            persistSave();
+          } else if (pk.kind === 'hp') p.hp = Math.min(p.maxHp, p.hp + 35);
+          else p.armor = Math.min(p.maxArmor, p.armor + 35);
+          sound.playPickup();
+          state.pickups.splice(i, 1);
         }
       }
 
       for (let i = state.particles.length - 1; i >= 0; i--) {
-        const pt = state.particles[i]; pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.life -= dt;
+        const pt = state.particles[i];
+        pt.x += pt.vx * dt; pt.y += pt.vy * dt;
+        pt.vx *= Math.exp(-3.5 * dt); pt.vy *= Math.exp(-3.5 * dt);
+        pt.life -= dt;
         if (pt.life <= 0) state.particles.splice(i, 1);
       }
       for (let i = state.skids.length - 1; i >= 0; i--) {
-        state.skids[i].alpha -= dt * 0.04; if (state.skids[i].alpha <= 0) state.skids.splice(i, 1);
+        state.skids[i].alpha -= dt * 0.04;
+        if (state.skids[i].alpha <= 0) state.skids.splice(i, 1);
       }
 
       if (state.mission) {
-        const m = state.mission; m.timer -= dt;
-        if (m.timer <= 0) { state.mission = null; showBanner('CONTRACT FAILED', '#ff2a5f'); }
-        else if (m.type === 'checkpoint' && Math.hypot(p.x - m.tx, p.y - m.ty) < 65) {
-          saveData.cash += m.reward; saveData.missionsCleared++; persistSave();
-          sound.playPickup(); showBanner(`PASSED +$${m.reward}`, '#00f5d4'); state.mission = null;
-        } else if (m.type === 'survive' && m.timer <= 0.1) {
-          saveData.cash += m.reward; saveData.missionsCleared++; persistSave();
-          sound.playPickup(); showBanner(`PASSED +$${m.reward}`, '#00f5d4'); state.mission = null;
+        const m = state.mission;
+        m.timer -= dt;
+        if (m.timer <= 0) {
+          state.mission = null;
+          showBanner('CONTRACT FAILED', '#ff3b5c');
+        } else if (m.type === 'checkpoint') {
+          if (Math.hypot(p.x - m.tx, p.y - m.ty) < 62) completeMission();
+        } else if (m.type === 'courier') {
+          if (m.phase === 0 && Math.hypot(p.x - m.tx, p.y - m.ty) < 62) {
+            m.phase = 1; m.tx = m.bx; m.ty = m.by;
+            m.title = 'MIDNIGHT COURIER: DELIVER TO DROP';
+            addWantedHeat(25);
+            showBanner('PACKAGE ACQUIRED', '#38bdf8');
+          } else if (m.phase === 1 && Math.hypot(p.x - m.tx, p.y - m.ty) < 62) completeMission();
+        } else if (m.type === 'survive') {
+          m.tx = p.x; m.ty = p.y;
+          if (m.timer <= 0.1) completeMission();
         } else if (m.type === 'sweep') {
           const alive = m.targets.filter(t => !t.wrecked);
-          if (alive.length === 0) {
-            saveData.cash += m.reward; saveData.missionsCleared++; persistSave();
-            sound.playPickup(); showBanner(`PASSED +$${m.reward}`, '#00f5d4'); state.mission = null;
-          } else { m.tx = alive[0].x; m.ty = alive[0].y; }
+          if (alive.length === 0) completeMission();
+          else { m.tx = alive[0].x; m.ty = alive[0].y; m.title = `TURF SWEEP: ${alive.length} SUV(s) LEFT`; }
         }
       }
 
-      sound.tickMusic(dt, state.wantedStars, !!p.car);
+      sound.tickMusicAndSiren(dt, state.wantedStars, !!p.car);
     }
 
-    // 9. 2.5D VICE CITY RENDERER
-    function getLighting() {
+    // =========================================================================
+    // 10. 2.5D RADIAL EXTRUSION RENDERER & WET-ASPHALT REFLECTIONS
+    // =========================================================================
+    function getLightingState() {
       const t = state.timeOfDay;
-      if (t < 0.45) return { dark: 0.06, tint: 'rgba(255, 190, 11, 0.05)', label: 'DAYLIGHT', night: 0.1 };
-      if (t < 0.72) return { dark: 0.22, tint: 'rgba(255, 78, 205, 0.12)', label: 'SUNSET', night: 0.55 };
-      return { dark: 0.52, tint: 'rgba(15, 10, 40, 0.2)', label: 'VICE NIGHT', night: 0.95 };
+      let dark, label;
+      if (t < 0.18) { dark = 0.42 - t * 1.8; label = 'DAWN'; }
+      else if (t < 0.50) { dark = 0.08; label = 'DAYTIME'; }
+      else if (t < 0.68) { dark = 0.08 + (t - 0.50) * 2.5; label = 'DUSK'; }
+      else { dark = 0.56 + Math.sin((t - 0.68) / 0.32 * Math.PI) * 0.12; label = 'MIDNIGHT'; }
+      return { dark: Math.max(0.06, Math.min(0.68, dark)), label, nightFactor: Math.min(1, dark / 0.55) };
     }
 
     function renderWorld() {
       const cx = state.cam.x + (Math.random() - 0.5) * state.cam.shake;
       const cy = state.cam.y + (Math.random() - 0.5) * state.cam.shake;
-      const hw = viewW / 2, hh = viewH / 2;
-      const light = getLighting();
+      const halfW = viewW / 2;
+      const halfH = viewH / 2;
+      const light = getLightingState();
 
-      // Atlantic Ocean
-      ctx.fillStyle = '#062844';
+      ctx.fillStyle = '#07131f';
       ctx.fillRect(0, 0, viewW, viewH);
 
       ctx.save();
-      ctx.translate(hw - cx, hh - cy);
+      ctx.translate(halfW - cx, halfH - cy);
 
-      // Ocean Shimmer Lines
-      ctx.strokeStyle = 'rgba(0, 245, 212, 0.12)';
+      // Harbor wave lines
+      ctx.strokeStyle = 'rgba(45, 226, 230, 0.06)';
       ctx.lineWidth = 2;
-      const waveOff = Math.sin(performance.now() * 0.002) * 14;
-      for (let wx = 4850; wx < 6000; wx += 90) {
-        if (wx < cx - hw - 50 |
-
-| wx > cx + hw + 50) continue;
-        ctx.beginPath(); ctx.moveTo(wx + waveOff, cy - hh); ctx.lineTo(wx + waveOff, cy + hh); ctx.stroke();
+      const wStep = 90;
+      const wx0 = Math.floor((cx - halfW) / wStep) * wStep;
+      for (let wx = wx0; wx < cx + halfW + wStep; wx += wStep) {
+        if (wx > LAND_OFFSET && wx < LAND_OFFSET + LAND_SIZE) continue;
+        ctx.beginPath(); ctx.moveTo(wx, cy - halfH); ctx.lineTo(wx, cy + halfH); ctx.stroke();
       }
 
-      // Leonida Keys Islands
-      for (const isl of islands) {
-        ctx.fillStyle = '#d9b982';
-        ctx.fillRect(isl.x - 16, isl.y - 16, isl.w + 32, isl.h + 32);
-        ctx.fillStyle = '#1b1d2b';
-        ctx.fillRect(isl.x, isl.y, isl.w, isl.h);
+      // Waterfront Piers & Dock Island
+      for (const pier of piers) {
+        ctx.fillStyle = pier.isDock ? '#1b222e' : '#242b38';
+        ctx.fillRect(pier.x, pier.y, pier.w, pier.h);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(pier.x, pier.y, pier.w, pier.h);
       }
 
-      // Causeway Bridges
+      // Harbor Bridges
       for (const br of bridges) {
-        ctx.fillStyle = '#262b3d';
+        ctx.fillStyle = '#1d2432';
         ctx.fillRect(br.x, br.y, br.w, br.h);
-        ctx.strokeStyle = '#ffbe0b';
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 5;
+        ctx.strokeRect(br.x, br.y, br.w, br.h);
+        ctx.strokeStyle = 'rgba(247, 183, 49, 0.55)';
         ctx.lineWidth = 2;
-        ctx.setLineDash([14, 14]);
+        ctx.setLineDash([16, 16]);
         ctx.beginPath();
-        if (br.dir === 'v') { ctx.moveTo(br.x + br.w / 2, br.y); ctx.lineTo(br.x + br.w / 2, br.y + br.h); }
-        else { ctx.moveTo(br.x, br.y + br.h / 2); ctx.lineTo(br.x + br.w, br.y + br.h / 2); }
+        ctx.moveTo(br.x, br.y + br.h / 2);
+        ctx.lineTo(br.x + br.w, br.y + br.h / 2);
         ctx.stroke();
         ctx.setLineDash([]);
       }
 
-      // Mainland + Golden Vice Beach Sand Strip
-      ctx.fillStyle = '#171926';
-      ctx.fillRect(600, 600, 4200, 4200);
-      ctx.fillStyle = '#e6c78c'; // Sandy Vice Beach east coast
-      ctx.fillRect(4470, 600, 330, 4200);
+      // City Asphalt Base
+      ctx.fillStyle = asphaltPattern || '#151922';
+      ctx.fillRect(LAND_OFFSET, LAND_OFFSET, LAND_SIZE, LAND_SIZE);
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(LAND_OFFSET, LAND_OFFSET, LAND_SIZE, LAND_SIZE);
 
-      // Grassrivers Swamp Water Pools
-      ctx.fillStyle = '#12382c';
-      for (const sw of swamps) ctx.fillRect(sw.x, sw.y, sw.w, sw.h);
+      const gStartX = Math.max(0, Math.floor((cx - halfW - LAND_OFFSET) / BLOCK_SIZE));
+      const gEndX = Math.min(GRID_BLOCKS, Math.ceil((cx + halfW - LAND_OFFSET) / BLOCK_SIZE));
+      const gStartY = Math.max(0, Math.floor((cy - halfH - LAND_OFFSET) / BLOCK_SIZE));
+      const gEndY = Math.min(GRID_BLOCKS, Math.ceil((cy + halfH - LAND_OFFSET) / BLOCK_SIZE));
 
-      // City Sidewalk Blocks
-      ctx.fillStyle = '#282c3f';
-      for (let gx = 0; gx < GRID_BLOCKS; gx++) {
-        for (let gy = 0; gy < GRID_BLOCKS; gy++) {
-          const rx = MAIN_START + gx * BLOCK_SIZE + ROAD_W;
-          const ry = MAIN_START + gy * BLOCK_SIZE + ROAD_W;
-          if (rx + BLOCK_SIZE < cx - hw |
-
-| rx > cx + hw |
-| ry + BLOCK_SIZE < cy - hh |
-| ry > cy + hh) continue;
-          ctx.fillRect(rx, ry, BLOCK_SIZE - ROAD_W, BLOCK_SIZE - ROAD_W);
+      ctx.fillStyle = '#222834';
+      for (let gx = gStartX; gx < gEndX; gx++) {
+        for (let gy = gStartY; gy < gEndY; gy++) {
+          ctx.fillRect(LAND_OFFSET + gx * BLOCK_SIZE + ROAD_W, LAND_OFFSET + gy * BLOCK_SIZE + ROAD_W, BLOCK_SIZE - ROAD_W, BLOCK_SIZE - ROAD_W);
         }
       }
 
-      // Road Lane Dashes
-      ctx.strokeStyle = 'rgba(255, 190, 11, 0.45)';
+      ctx.strokeStyle = 'rgba(247, 183, 49, 0.38)';
       ctx.lineWidth = 2;
-      ctx.setLineDash([18, 20]);
+      ctx.setLineDash([18, 22]);
       ctx.beginPath();
-      for (let i = 0; i <= GRID_BLOCKS; i++) {
-        const pos = MAIN_START + i * BLOCK_SIZE + ROAD_W / 2;
-        ctx.moveTo(pos, 600); ctx.lineTo(pos, 4780);
-        ctx.moveTo(600, pos); ctx.lineTo(4450, pos);
+      for (let ix = gStartX; ix <= gEndX; ix++) {
+        const rx = LAND_OFFSET + ix * BLOCK_SIZE + ROAD_W / 2;
+        ctx.moveTo(rx, Math.max(LAND_OFFSET, cy - halfH));
+        ctx.lineTo(rx, Math.min(LAND_OFFSET + LAND_SIZE, cy + halfH));
+      }
+      for (let iy = gStartY; iy <= gEndY; iy++) {
+        const ry = LAND_OFFSET + iy * BLOCK_SIZE + ROAD_W / 2;
+        ctx.moveTo(Math.max(LAND_OFFSET, cx - halfW), ry);
+        ctx.lineTo(Math.min(LAND_OFFSET + LAND_SIZE, cx + halfW), ry);
       }
       ctx.stroke();
       ctx.setLineDash([]);
 
+      for (const pk of parks) {
+        if (pk.x + pk.w < cx - halfW || pk.x > cx + halfW || pk.y + pk.h < cy - halfH || pk.y > cy + halfH) continue;
+        ctx.fillStyle = '#143326';
+        ctx.fillRect(pk.x, pk.y, pk.w, pk.h);
+        if (pk.pond) {
+          ctx.fillStyle = '#0c2d48';
+          ctx.beginPath();
+          ctx.ellipse(pk.x + pk.w / 2, pk.y + pk.h / 2, pk.w * 0.28, pk.h * 0.22, 0.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Wet-Asphalt Reflections on roads when Rain is active
+      if (saveData.rain) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (const pr of props) {
+          if (pr.type !== 'lamp' || pr.broken || Math.abs(pr.x - cx) > halfW + 90 || Math.abs(pr.y - cy) > halfH + 90) continue;
+          ctx.fillStyle = 'rgba(247, 183, 49, 0.08)';
+          ctx.fillRect(pr.x - 10, pr.y + 4, 20, 32);
+        }
+        for (const b of buildings) {
+          if (!b.neon || b.x + b.w < cx - halfW - 60 || b.x > cx + halfW + 60 || b.y + b.h < cy - halfH - 60 || b.y > cy + halfH + 60) continue;
+          ctx.fillStyle = b.neon;
+          ctx.globalAlpha = 0.09;
+          ctx.fillRect(b.x + 8, b.y + b.h + 2, b.w - 16, 18);
+        }
+        ctx.restore();
+      }
+
       // Tire Skids
       ctx.lineWidth = 3;
       for (const s of state.skids) {
-        ctx.strokeStyle = `rgba(10, 8, 18, ${s.alpha.toFixed(2)})`;
+        ctx.strokeStyle = `rgba(5, 7, 10, ${s.alpha.toFixed(2)})`;
         ctx.beginPath(); ctx.moveTo(s.x1, s.y1); ctx.lineTo(s.x2, s.y2); ctx.stroke();
       }
 
-      // Mission Marker
       if (state.mission && state.mission.type !== 'survive') {
         const pulse = 26 + Math.sin(performance.now() * 0.008) * 6;
-        ctx.strokeStyle = '#ff4ecd';
+        ctx.strokeStyle = state.mission.type === 'sweep' ? '#ff3b5c' : '#facc15';
         ctx.lineWidth = 4;
         ctx.beginPath(); ctx.arc(state.mission.tx, state.mission.ty, pulse, 0, Math.PI * 2); ctx.stroke();
       }
 
-      // Cash Pickups
       for (const pk of state.pickups) {
-        ctx.fillStyle = '#00f5d4';
-        ctx.beginPath(); ctx.arc(pk.x, pk.y, 7, 0, Math.PI * 2); ctx.fill();
+        if (Math.abs(pk.x - cx) > halfW + 40 || Math.abs(pk.y - cy) > halfH + 40) continue;
+        const bobY = Math.sin(pk.bob) * 3;
+        ctx.fillStyle = pk.kind === 'cash' ? '#4ade80' : pk.kind === 'hp' ? '#ef4444' : '#38bdf8';
+        ctx.beginPath(); ctx.arc(pk.x, pk.y + bobY, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(pk.kind === 'cash' ? '$' : pk.kind === 'hp' ? '+' : 'A', pk.x, pk.y + bobY + 3.5);
       }
 
-      // Pedestrians & Cops
       for (const ped of state.peds) {
-        if (Math.abs(ped.x - cx) > hw + 30 |
-
-| Math.abs(ped.y - cy) > hh + 30) continue;
+        if (Math.abs(ped.x - cx) > halfW + 40 || Math.abs(ped.y - cy) > halfH + 40) continue;
+        ctx.save();
+        ctx.translate(ped.x, ped.y);
+        ctx.rotate(ped.angle);
         ctx.fillStyle = ped.shirt;
-        ctx.beginPath(); ctx.arc(ped.x, ped.y, 6, 0, Math.PI * 2); ctx.fill();
-      }
-      for (const cop of state.cops) {
-        ctx.fillStyle = '#3b82f6';
-        ctx.beginPath(); ctx.arc(cop.x, cop.y, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(0, 0, 6, 8, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#e2b89b';
+        ctx.beginPath(); ctx.arc(2, 0, 4.2, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
       }
 
-      // Player (Lucia or Jason)
+      for (const cop of state.cops) {
+        ctx.save();
+        ctx.translate(cop.x, cop.y);
+        ctx.rotate(cop.angle);
+        ctx.fillStyle = '#1d4ed8';
+        ctx.beginPath(); ctx.ellipse(0, 0, 7, 9, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath(); ctx.arc(2, 0, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
       const p = state.player;
       if (p && !p.car) {
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.angle);
-        ctx.fillStyle = CHARS[state.charIdx].color;
+        if (p.dodgeTimer > 0) ctx.globalAlpha = 0.65;
+        if (p.crouchCover) ctx.scale(0.86, 0.86);
+        ctx.fillStyle = '#1e293b';
         ctx.beginPath(); ctx.ellipse(0, 0, 8, 10, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#f8fafc';
-        ctx.beginPath(); ctx.arc(3, 0, 4.5, 0, Math.PI * 2); ctx.fill();
-        if (p.weaponIdx > 0) { ctx.fillStyle = '#94a3b8'; ctx.fillRect(6, -2, 12, 3.5); }
-        ctx.restore();
-      }
-
-      // Cars
-      const siren = ((performance.now() / 160) | 0) % 2;
-      for (const c of state.cars) {
-        if (Math.abs(c.x - cx) > hw + 80 |
-
-| Math.abs(c.y - cy) > hh + 80) continue;
-        ctx.save();
-        ctx.translate(c.x, c.y); ctx.rotate(c.angle);
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.fillRect(-c.spec.w / 2 + 4, -c.spec.d / 2 + 4, c.spec.w, c.spec.d);
-        ctx.fillStyle = c.wrecked ? '#1f2937' : c.color;
-        ctx.fillRect(-c.spec.w / 2, -c.spec.d / 2, c.spec.w, c.spec.d);
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(-c.spec.w * 0.2, -c.spec.d * 0.36, c.spec.w * 0.45, c.spec.d * 0.72);
-        if (c.spec.isCop && !c.wrecked) {
-          ctx.fillStyle = siren === 0 ? '#ef4444' : '#3b82f6';
-          ctx.fillRect(-2, -7, 5, 14);
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(2, 0, 5, 0, Math.PI * 2); ctx.fill();
+        if (p.weaponIdx > 0) {
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillRect(6, -2, p.weaponIdx === 3 ? 15 : 11, 3.5);
+        } else if (p.swingAnim > 0) {
+          ctx.fillStyle = p.comboStep === 2 ? '#2de2e6' : '#fde047';
+          ctx.beginPath(); ctx.arc(14, 0, p.comboStep === 2 ? 9 : 6, 0, Math.PI * 2); ctx.fill();
         }
         ctx.restore();
       }
 
-      // Palm Trees
-      for (const pl of palms) {
-        if (Math.abs(pl.x - cx) > hw + 40 |
+      const sirenPhase = ((performance.now() / 160) | 0) % 2;
+      for (const c of state.cars) {
+        if (Math.abs(c.x - cx) > halfW + 90 || Math.abs(c.y - cy) > halfH + 90) continue;
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.angle);
 
-| Math.abs(pl.y - cy) > hh + 40) continue;
-        ctx.fillStyle = '#15803d';
-        ctx.beginPath(); ctx.arc(pl.x, pl.y, pl.r, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#22c55e';
-        ctx.beginPath(); ctx.arc(pl.x - 2, pl.y - 2, pl.r * 0.55, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fillRect(-c.spec.w / 2 + 4, -c.spec.d / 2 + 5, c.spec.w, c.spec.d);
+
+        ctx.fillStyle = c.wrecked ? '#1f2937' : c.color;
+        ctx.fillRect(-c.spec.w / 2, -c.spec.d / 2, c.spec.w, c.spec.d);
+
+        ctx.fillStyle = c.wrecked ? '#111827' : '#0f172a';
+        ctx.fillRect(-c.spec.w * 0.22, -c.spec.d * 0.38, c.spec.w * 0.48, c.spec.d * 0.76);
+        ctx.fillStyle = c.wrecked ? '#374151' : 'rgba(255,255,255,0.14)';
+        ctx.fillRect(-c.spec.w * 0.14, -c.spec.d * 0.34, c.spec.w * 0.26, c.spec.d * 0.68);
+
+        if (c.spec.isCop && !c.wrecked) {
+          ctx.fillStyle = sirenPhase === 0 ? '#ef4444' : '#3b82f6';
+          ctx.fillRect(-2, -8, 5, 8);
+          ctx.fillStyle = sirenPhase === 0 ? '#3b82f6' : '#ef4444';
+          ctx.fillRect(-2, 0, 5, 8);
+        }
+        if (!c.wrecked) {
+          ctx.fillStyle = '#ff3b5c';
+          ctx.fillRect(-c.spec.w / 2, -c.spec.d / 2 + 2, 2.5, 5);
+          ctx.fillRect(-c.spec.w / 2, c.spec.d / 2 - 7, 2.5, 5);
+        }
+        ctx.restore();
       }
 
-      // Bullets & Particles
+      for (const pr of props) {
+        if (Math.abs(pr.x - cx) > halfW + 50 || Math.abs(pr.y - cy) > halfH + 50) continue;
+        if (pr.type === 'tree') {
+          ctx.fillStyle = '#14532d';
+          ctx.beginPath(); ctx.arc(pr.x, pr.y, pr.r, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#166534';
+          ctx.beginPath(); ctx.arc(pr.x - 3, pr.y - 3, pr.r * 0.65, 0, Math.PI * 2); ctx.fill();
+        } else if (pr.type === 'hydrant') {
+          ctx.fillStyle = pr.broken ? '#475569' : '#dc2626';
+          ctx.beginPath(); ctx.arc(pr.x, pr.y, 4.5, 0, Math.PI * 2); ctx.fill();
+        } else if (pr.type === 'crate' && !pr.broken) {
+          ctx.fillStyle = '#92400e';
+          ctx.fillRect(pr.x - 9, pr.y - 9, 18, 18);
+          ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.5;
+          ctx.strokeRect(pr.x - 9, pr.y - 9, 18, 18);
+        } else if (pr.type === 'lamp') {
+          ctx.fillStyle = pr.broken ? '#334155' : '#e2e8f0';
+          ctx.beginPath(); ctx.arc(pr.x, pr.y, 3.5, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
       ctx.lineWidth = 2.5;
       for (const b of state.bullets) {
         ctx.strokeStyle = b.color;
@@ -1857,197 +2743,425 @@
       }
       ctx.globalAlpha = 1;
 
-      // 2.5D Radial-Extruded Buildings (Painter Sorted)
-      const visB = [];
+      // 2.5D Radial-Extruded Buildings (Viewport Culled & Painter Sorted)
+      const margin = 220;
+      const visBuildings = [];
       for (let i = 0; i < buildings.length; i++) {
         const b = buildings[i];
-        if (b.x + b.w < cx - hw - 220 |
-
-| b.x > cx + hw + 220 |
-| b.y + b.h < cy - hh - 220 |
-| b.y > cy + hh + 220) continue;
+        if (b.x + b.w < cx - halfW - margin || b.x > cx + halfW + margin ||
+            b.y + b.h < cy - halfH - margin || b.y > cy + halfH + margin) continue;
         const qx = Math.max(b.x, Math.min(cx, b.x + b.w));
         const qy = Math.max(b.y, Math.min(cy, b.y + b.h));
-        b._d = (qx - cx) * (qx - cx) + (qy - cy) * (qy - cy);
-        visB.push(b);
+        b._distSq = (qx - cx) * (qx - cx) + (qy - cy) * (qy - cy);
+        visBuildings.push(b);
       }
-      visB.sort((a, b) => b._d - a._d);
+      visBuildings.sort((a, b) => b._distSq - a._distSq);
 
-      for (const b of visB) {
-        const sc = 1 + b.height * 0.0022;
+      const kExt = 0.0022;
+      for (let i = 0; i < visBuildings.length; i++) {
+        const b = visBuildings[i];
+        const scale = 1 + b.height * kExt;
         const base = [[b.x, b.y], [b.x + b.w, b.y], [b.x + b.w, b.y + b.h], [b.x, b.y + b.h]];
-        const top = base.map(([px, py]) => [cx + (px - cx) * sc, cy + (py - cy) * sc]);
+        const top = base.map(([px, py]) => [cx + (px - cx) * scale, cy + (py - cy) * scale]);
+
         for (let e = 0; e < 4; e++) {
           const j = (e + 1) & 3;
           const x1 = base[e][0], y1 = base[e][1], x2 = base[j][0], y2 = base[j][1];
-          if ((y2 - y1) * (cx - x1) - (x2 - x1) * (cy - y1) <= 0) continue;
-          ctx.fillStyle = (e === 1 |
+          const ex = x2 - x1, ey = y2 - y1;
+          if (ey * (cx - x1) - ex * (cy - y1) <= 0) continue;
 
-| e === 3) ? b.wall : '#1d1833';
+          ctx.fillStyle = (e === 1 || e === 3) ? b.wall : '#151b26';
           ctx.beginPath();
-          ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(top[j][0], top[j][1]); ctx.lineTo(top[e][0], top[e][1]);
-          ctx.closePath(); ctx.fill();
+          ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+          ctx.lineTo(top[j][0], top[j][1]); ctx.lineTo(top[e][0], top[e][1]);
+          ctx.closePath();
+          ctx.fill();
+
+          if (light.nightFactor > 0.2) {
+            ctx.strokeStyle = `rgba(253, 224, 71, ${(0.22 * light.nightFactor).toFixed(2)})`;
+            ctx.lineWidth = 2;
+            for (let t = 0.25; t <= 0.75; t += 0.25) {
+              ctx.beginPath();
+              ctx.moveTo(x1 + (top[e][0] - x1) * t, y1 + (top[e][1] - y1) * t);
+              ctx.lineTo(x2 + (top[j][0] - x2) * t, y2 + (top[j][1] - y2) * t);
+              ctx.stroke();
+            }
+          }
+
           if (b.neon) {
-            ctx.strokeStyle = b.neon; ctx.lineWidth = 2.5;
+            ctx.strokeStyle = b.neon;
+            ctx.lineWidth = 2.5;
             ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
           }
         }
+
         ctx.fillStyle = b.roof;
         ctx.beginPath();
         ctx.moveTo(top[0][0], top[0][1]); ctx.lineTo(top[1][0], top[1][1]);
         ctx.lineTo(top[2][0], top[2][1]); ctx.lineTo(top[3][0], top[3][1]);
-        ctx.closePath(); ctx.fill();
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        const rcx = (top[0][0] + top[2][0]) * 0.5;
+        const rcy = (top[0][1] + top[2][1]) * 0.5;
+        ctx.fillStyle = '#0f141e';
+        ctx.fillRect(rcx - 16, rcy - 12, 32, 24);
+        if (b.hasHelipad) {
+          ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(rcx, rcy, 24, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+
+      const lightCycle = state.trafficClock % 15;
+      for (const inter of intersections) {
+        if (!inter.hasLight || Math.abs(inter.x - cx) > halfW + 80 || Math.abs(inter.y - cy) > halfH + 80) continue;
+        const nsColor = lightCycle < 6 ? '#22c55e' : lightCycle < 7.5 ? '#eab308' : '#ef4444';
+        const ewColor = lightCycle >= 7.5 && lightCycle < 13.5 ? '#22c55e' : lightCycle >= 13.5 ? '#eab308' : '#ef4444';
+        ctx.fillStyle = nsColor;
+        ctx.beginPath(); ctx.arc(inter.x - ROAD_W * 0.48, inter.y - ROAD_W * 0.48, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = ewColor;
+        ctx.beginPath(); ctx.arc(inter.x + ROAD_W * 0.48, inter.y + ROAD_W * 0.48, 4.5, 0, Math.PI * 2); ctx.fill();
+      }
+
+      if (light.nightFactor > 0.15) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (const pr of props) {
+          if (pr.type !== 'lamp' || pr.broken || Math.abs(pr.x - cx) > halfW + 90 || Math.abs(pr.y - cy) > halfH + 90) continue;
+          ctx.fillStyle = `rgba(247, 183, 49, ${(0.12 * light.nightFactor).toFixed(2)})`;
+          ctx.beginPath(); ctx.arc(pr.x, pr.y, saveData.rain ? 58 : 44, 0, Math.PI * 2); ctx.fill();
+        }
+        for (const c of state.cars) {
+          if (c.wrecked || !c.headlights || Math.abs(c.x - cx) > halfW + 180 || Math.abs(c.y - cy) > halfH + 180) continue;
+          ctx.save();
+          ctx.translate(c.x, c.y);
+          ctx.rotate(c.angle);
+          ctx.fillStyle = `rgba(255, 248, 210, ${(0.16 * light.nightFactor).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.moveTo(c.spec.w * 0.48, -7);
+          ctx.lineTo(c.spec.w * 0.48 + 160, -52);
+          ctx.lineTo(c.spec.w * 0.48 + 160, 52);
+          ctx.lineTo(c.spec.w * 0.48, 7);
+          ctx.closePath();
+          ctx.fill();
+          if (c.spec.isCop && (state.wantedStars > 0 || c.aiMode === 'cop')) {
+            ctx.fillStyle = sirenPhase === 0 ? 'rgba(239,68,68,0.22)' : 'rgba(59,130,246,0.22)';
+            ctx.beginPath(); ctx.arc(0, 0, 75, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.restore();
+        }
+        ctx.restore();
       }
 
       ctx.restore();
 
-      // Vice City Sunset / Night Tint
-      ctx.fillStyle = light.tint;
-      ctx.fillRect(0, 0, viewW, viewH);
-      ctx.fillStyle = `rgba(8, 6, 20, ${light.dark})`;
+      ctx.fillStyle = `rgba(5, 9, 20, ${light.dark.toFixed(2)})`;
       ctx.fillRect(0, 0, viewW, viewH);
 
       if (saveData.rain) {
-        ctx.strokeStyle = 'rgba(0, 245, 212, 0.22)';
+        ctx.strokeStyle = 'rgba(148, 197, 255, 0.24)';
         ctx.lineWidth = 1.2;
         ctx.beginPath();
-        for (let i = 0; i < 80; i++) {
-          const rx = ((i * 197 + performance.now() * 0.35) % (viewW + 80)) - 40;
-          const ry = ((i * 313 + performance.now() * 0.95) % (viewH + 80)) - 40;
-          ctx.moveTo(rx, ry); ctx.lineTo(rx - 8, ry + 20);
+        for (let i = 0; i < 95; i++) {
+          const rx = ((i * 197 + performance.now() * 0.35) % (viewW + 100)) - 50;
+          const ry = ((i * 313 + performance.now() * 0.95) % (viewH + 100)) - 50;
+          ctx.moveTo(rx, ry); ctx.lineTo(rx - 9, ry + 22);
         }
         ctx.stroke();
+      }
+
+      if (state.screen === 'playing' && !state.paused && !touchState.active) {
+        const rad = 10 + (p ? p.recoilBloom * 45 : 0);
+        ctx.strokeStyle = state.hitMarkerTimer > 0 ? '#ff3b5c' : 'rgba(45, 226, 230, 0.85)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, rad, 0, Math.PI * 2);
+        ctx.moveTo(mouse.x - rad - 5, mouse.y); ctx.lineTo(mouse.x - rad + 4, mouse.y);
+        ctx.moveTo(mouse.x + rad - 4, mouse.y); ctx.lineTo(mouse.x + rad + 5, mouse.y);
+        ctx.moveTo(mouse.x, mouse.y - rad - 5); ctx.lineTo(mouse.x, mouse.y - rad + 4);
+        ctx.moveTo(mouse.x, mouse.y + rad - 4); ctx.lineTo(mouse.x, mouse.y + rad + 5);
+        ctx.stroke();
+
+        if (state.hitMarkerTimer > 0) {
+          ctx.beginPath();
+          ctx.moveTo(mouse.x - 6, mouse.y - 6); ctx.lineTo(mouse.x + 6, mouse.y + 6);
+          ctx.moveTo(mouse.x + 6, mouse.y - 6); ctx.lineTo(mouse.x - 6, mouse.y + 6);
+          ctx.stroke();
+        }
       }
     }
 
     function renderRadar() {
       const p = state.player;
       if (!p) return;
-      const sz = radarCanvas.width / dpr, r = sz / 2, sc = 0.065;
-      rctx.fillStyle = '#062844';
-      rctx.fillRect(0, 0, sz, sz);
-      rctx.save(); rctx.translate(r, r);
-      rctx.fillStyle = '#1f2338';
-      rctx.fillRect((600 - p.x) * sc, (600 - p.y) * sc, 4200 * sc, 4200 * sc);
-      rctx.fillStyle = '#d9b982';
-      rctx.fillRect((4470 - p.x) * sc, (600 - p.y) * sc, 330 * sc, 4200 * sc);
-      for (const isl of islands) { rctx.fillStyle = '#1f2338'; rctx.fillRect((isl.x - p.x) * sc, (isl.y - p.y) * sc, isl.w * sc, isl.h * sc); }
-      for (const br of bridges) { rctx.fillStyle = '#ffbe0b'; rctx.fillRect((br.x - p.x) * sc, (br.y - p.y) * sc, br.w * sc, br.h * sc); }
+      const size = radarCanvas.width / dpr;
+      const r = size / 2;
+      const scale = 0.068;
+
+      rctx.clearRect(0, 0, size, size);
+      rctx.fillStyle = '#090f1a';
+      rctx.fillRect(0, 0, size, size);
+
+      rctx.save();
+      rctx.translate(r, r);
+
+      const px = p.x, py = p.y;
+      for (const br of bridges) {
+        rctx.fillStyle = '#334155';
+        rctx.fillRect((br.x - px) * scale, (br.y - py) * scale, br.w * scale, br.h * scale);
+      }
+      for (let gx = 0; gx < GRID_BLOCKS; gx++) {
+        for (let gy = 0; gy < GRID_BLOCKS; gy++) {
+          const rx = (LAND_OFFSET + gx * BLOCK_SIZE + ROAD_W - px) * scale;
+          const ry = (LAND_OFFSET + gy * BLOCK_SIZE + ROAD_W - py) * scale;
+          const rw = (BLOCK_SIZE - ROAD_W) * scale;
+          if (rx + rw < -r || rx > r || ry + rw < -r || ry > r) continue;
+          rctx.fillStyle = (gx >= 6 && gx <= 7 && gy >= 6 && gy <= 7) ? '#14532d' : '#1e293b';
+          rctx.fillRect(rx, ry, rw, rw);
+        }
+      }
+
+      for (const c of state.cars) {
+        if (c === p.car || c.wrecked) continue;
+        const dx = (c.x - px) * scale, dy = (c.y - py) * scale;
+        if (Math.hypot(dx, dy) > r - 6) continue;
+        rctx.fillStyle = c.aiMode === 'cop' ? (((performance.now() / 180) | 0) % 2 ? '#ef4444' : '#3b82f6') : c.aiMode === 'target' ? '#ff3b5c' : '#94a3b8';
+        rctx.fillRect(dx - 2, dy - 2, 4, 4);
+      }
+
       if (state.mission && state.mission.type !== 'survive') {
-        let dx = (state.mission.tx - p.x) * sc, dy = (state.mission.ty - p.y) * sc;
+        let dx = (state.mission.tx - px) * scale;
+        let dy = (state.mission.ty - py) * scale;
         const d = Math.hypot(dx, dy);
         if (d > r - 8) { dx = (dx / d) * (r - 8); dy = (dy / d) * (r - 8); }
-        rctx.fillStyle = '#ff4ecd'; rctx.beginPath(); rctx.arc(dx, dy, 4.5, 0, Math.PI * 2); rctx.fill();
+        rctx.fillStyle = state.mission.type === 'sweep' ? '#ff3b5c' : '#facc15';
+        rctx.beginPath(); rctx.arc(dx, dy, 4.5, 0, Math.PI * 2); rctx.fill();
       }
+
       rctx.rotate(p.car ? p.car.angle : p.angle);
-      rctx.fillStyle = '#00f5d4';
-      rctx.beginPath(); rctx.moveTo(6, 0); rctx.lineTo(-4, -4); rctx.lineTo(-4, 4); rctx.closePath(); rctx.fill();
+      rctx.fillStyle = '#2de2e6';
+      rctx.beginPath();
+      rctx.moveTo(6, 0); rctx.lineTo(-4, -4); rctx.lineTo(-2, 0); rctx.lineTo(-4, 4);
+      rctx.closePath(); rctx.fill();
       rctx.restore();
     }
 
+    function renderPauseMap() {
+      const mc = document.getElementById('pause-map');
+      const mctx = mc.getContext('2d');
+      const W = mc.width, H = mc.height;
+      const total = LAND_OFFSET + LAND_SIZE + 260;
+      const sc = W / total;
+
+      mctx.fillStyle = '#07131f';
+      mctx.fillRect(0, 0, W, H);
+      mctx.fillStyle = '#151922';
+      mctx.fillRect(LAND_OFFSET * sc, LAND_OFFSET * sc, LAND_SIZE * sc, LAND_SIZE * sc);
+      for (const br of bridges) {
+        mctx.fillStyle = '#475569';
+        mctx.fillRect(br.x * sc, br.y * sc, br.w * sc, br.h * sc);
+      }
+      for (const pk of piers) {
+        mctx.fillStyle = '#242b38';
+        mctx.fillRect(pk.x * sc, pk.y * sc, pk.w * sc, pk.h * sc);
+      }
+      mctx.fillStyle = '#14532d';
+      mctx.fillRect((LAND_OFFSET + 6 * BLOCK_SIZE + ROAD_W) * sc, (LAND_OFFSET + 6 * BLOCK_SIZE + ROAD_W) * sc, (BLOCK_SIZE * 2 - ROAD_W) * sc, (BLOCK_SIZE * 2 - ROAD_W) * sc);
+
+      if (state.mission && state.mission.type !== 'survive') {
+        mctx.fillStyle = '#facc15';
+        mctx.beginPath(); mctx.arc(state.mission.tx * sc, state.mission.ty * sc, 4, 0, Math.PI * 2); mctx.fill();
+      }
+      if (state.player) {
+        mctx.fillStyle = '#2de2e6';
+        mctx.beginPath(); mctx.arc(state.player.x * sc, state.player.y * sc, 4, 0, Math.PI * 2); mctx.fill();
+      }
+    }
+
     function updateHUD() {
-      const p = state.player, ch = CHARS[state.charIdx];
+      const p = state.player;
+      if (!p) return;
+
       document.getElementById('hud-cash').textContent = `$${saveData.cash.toLocaleString()}`;
-      document.getElementById('char-name').textContent = ch.name;
-      document.getElementById('char-name').style.color = ch.color;
       document.getElementById('bar-hp').style.width = `${(p.hp / p.maxHp) * 100}%`;
       document.getElementById('bar-arm').style.width = `${(p.armor / p.maxArmor) * 100}%`;
       document.getElementById('bar-stam').style.width = `${p.stamina}%`;
 
       const w = WEAPONS[p.weaponIdx];
       document.getElementById('hud-weap-name').textContent = w.name;
-      document.getElementById('hud-weap-ammo').textContent = p.reloadTimer > 0 ? 'RELOAD...' : w.melee ? 'MELEE' : `${p.ammo[p.weaponIdx]} / ∞`;
+      document.getElementById('hud-weap-ammo').textContent = p.reloadTimer > 0
+        ? 'RELOADING...'
+        : w.melee ? 'COMBO' : `${p.ammo[p.weaponIdx]} / ∞`;
 
-      document.querySelectorAll('#hud-stars .star').forEach((s, i) => {
-        s.classList.toggle('lit', i < state.wantedStars);
-        s.classList.toggle('evading', i < state.wantedStars && state.wantedEvadeTimer > 0.5);
+      const starNodes = document.querySelectorAll('#hud-stars .star');
+      const evading = state.wantedEvadeTimer > 0.5;
+      starNodes.forEach((el, idx) => {
+        el.classList.toggle('lit', idx < state.wantedStars);
+        el.classList.toggle('evading', idx < state.wantedStars && evading);
       });
 
-      document.getElementById('world-badge').textContent = `${getLighting().label} • ${getDistrict(p.x, p.y)} • ${saveData.rain ? 'RAIN' : 'CLEAR'}`;
-      const spd = document.getElementById('speed-readout'), pr = document.getElementById('context-prompt');
+      const gx = Math.max(0, Math.min(GRID_BLOCKS - 1, Math.floor((p.x - LAND_OFFSET) / BLOCK_SIZE)));
+      const gy = Math.max(0, Math.min(GRID_BLOCKS - 1, Math.floor((p.y - LAND_OFFSET) / BLOCK_SIZE)));
+      const district = p.x < LAND_OFFSET ? 'WEST HARBOR BRIDGE' : getDistrict(gx, gy);
+      const light = getLightingState();
+      document.getElementById('world-badge').textContent = `${light.label} • ${district} • ${saveData.rain ? 'RAIN' : 'CLEAR'}`;
+
+      const spdEl = document.getElementById('speed-readout');
+      const covEl = document.getElementById('cover-tag');
+      const promptEl = document.getElementById('context-prompt');
       if (p.car) {
-        spd.style.display = 'block'; spd.textContent = `${Math.round(Math.hypot(p.car.vx, p.car.vy) * 0.25)} MPH`;
-        pr.classList.add('visible'); pr.textContent = '[F] EXIT CAR';
+        spdEl.style.display = 'block';
+        spdEl.textContent = `${Math.round(Math.hypot(p.car.vx, p.car.vy) * 0.24)} MPH`;
+        covEl.style.display = 'none';
+        promptEl.classList.add('visible');
+        promptEl.textContent = '[F] EXIT VEHICLE';
       } else {
-        spd.style.display = 'none';
-        const near = findNearestCar(76);
-        if (near) { pr.classList.add('visible'); pr.textContent = `[F] ${near.driver ? 'HIJACK' : 'ENTER'} ${near.spec.name.toUpperCase()}`; }
-        else pr.classList.remove('visible');
+        spdEl.style.display = 'none';
+        covEl.style.display = p.inCover ? 'block' : 'none';
+        const near = findNearestCar(78);
+        if (near) {
+          promptEl.classList.add('visible');
+          promptEl.textContent = `[F] ${near.driver ? 'HIJACK' : 'ENTER'} ${near.spec.name.toUpperCase()}`;
+        } else {
+          promptEl.classList.remove('visible');
+        }
       }
-      document.getElementById('mission-hud').textContent = state.mission ? `${state.mission.title} (${Math.ceil(state.mission.timer)}s)` : 'NO ACTIVE CONTRACT — PRESS [M] FOR LEONIDA JOB';
+
+      const mHud = document.getElementById('mission-hud');
+      mHud.textContent = state.mission
+        ? `${state.mission.title} (${Math.ceil(state.mission.timer)}s)`
+        : 'NO ACTIVE CONTRACT — PRESS [M] TO START';
     }
 
-    // 10. UI & LOOP
+    // =========================================================================
+    // 11. MODALS, ARMORY UPGRADES & MAIN 60 FPS LOOP
+    // =========================================================================
+    function refreshPauseModal() {
+      document.getElementById('pause-cash').textContent = `$${saveData.cash.toLocaleString()}`;
+      document.getElementById('pause-best-stars').textContent = `${saveData.bestStars} ★`;
+      document.getElementById('opt-mute').textContent = `Audio: ${saveData.muted ? 'MUTED' : 'ON'}`;
+      document.getElementById('opt-rain').textContent = `Rain & Wet Asphalt: ${saveData.rain ? 'ON' : 'OFF'}`;
+      document.getElementById('opt-touch').textContent = `Touch UI: ${saveData.touchMode.toUpperCase()}`;
+
+      document.getElementById('buy-armor').disabled = saveData.cash < 250;
+      document.getElementById('buy-weapon').disabled = saveData.cash < 600 || saveData.weaponLevel >= 4;
+      document.getElementById('buy-tune').disabled = saveData.cash < 700 || saveData.tuneLevel >= 4;
+      document.getElementById('buy-heal').disabled = saveData.cash < 150 || (state.player && state.player.hp >= state.player.maxHp);
+      renderPauseMap();
+    }
+
     function togglePause(force) {
       state.paused = force !== undefined ? force : !state.paused;
       document.getElementById('pause-modal').classList.toggle('hidden', !state.paused);
       if (state.paused) {
-        keys.clear(); mouse.down = false;
-        document.getElementById('pause-cash').textContent = `$${saveData.cash.toLocaleString()}`;
-        document.getElementById('pause-best-stars').textContent = `${saveData.bestStars} ★`;
-        document.getElementById('opt-mute').textContent = `Audio: ${saveData.muted ? 'MUTED' : 'ON'}`;
-        document.getElementById('opt-rain').textContent = `Tropical Rain: ${saveData.rain ? 'ON' : 'OFF'}`;
-        document.getElementById('opt-touch').textContent = `Touch UI: ${saveData.touchMode.toUpperCase()}`;
-        const mc = document.getElementById('pause-map'), mctx = mc.getContext('2d'), sc = mc.width / WORLD_SIZE;
-        mctx.fillStyle = '#062844'; mctx.fillRect(0, 0, mc.width, mc.height);
-        mctx.fillStyle = '#1f2338'; mctx.fillRect(600 * sc, 600 * sc, 4200 * sc, 4200 * sc);
-        mctx.fillStyle = '#e6c78c'; mctx.fillRect(4470 * sc, 600 * sc, 330 * sc, 4200 * sc);
-        for (const isl of islands) { mctx.fillStyle = '#1f2338'; mctx.fillRect(isl.x * sc, isl.y * sc, isl.w * sc, isl.h * sc); }
-        for (const br of bridges) { mctx.fillStyle = '#ffbe0b'; mctx.fillRect(br.x * sc, br.y * sc, br.w * sc, br.h * sc); }
-        mctx.fillStyle = '#00f5d4'; mctx.beginPath(); mctx.arc(state.player.x * sc, state.player.y * sc, 4, 0, Math.PI * 2); mctx.fill();
-      } else canvas.focus();
+        keys.clear();
+        mouse.down = false;
+        refreshPauseModal();
+      } else {
+        canvas.focus();
+      }
     }
 
-    function retryGame() {
+    function retryFromWasted() {
       document.getElementById('wasted-screen').classList.add('hidden');
-      resetWorld(); state.screen = 'playing'; canvas.focus();
+      resetCityWorld();
+      state.screen = 'playing';
+      canvas.focus();
     }
 
     document.getElementById('btn-play').addEventListener('click', () => {
-      sound.unlock(); document.getElementById('start-screen').classList.add('hidden');
-      state.screen = 'playing'; canvas.focus(); showRadioToast('RADIO: ' + STATIONS[sound.stationIdx].name);
+      sound.unlock();
+      document.getElementById('start-screen').classList.add('hidden');
+      state.screen = 'playing';
+      canvas.focus();
+      showRadioToast('RADIO: ' + RADIO_STATIONS[sound.stationIdx].name);
     });
+
     document.getElementById('btn-pause').addEventListener('click', () => { sound.unlock(); togglePause(); });
     document.getElementById('btn-resume').addEventListener('click', () => togglePause(false));
-    document.getElementById('btn-restart').addEventListener('click', () => { togglePause(false); resetWorld(); });
-    document.getElementById('btn-retry').addEventListener('click', retryGame);
-    document.getElementById('btn-char').addEventListener('click', () => { sound.unlock(); switchProtagonist(); canvas.focus(); });
+    document.getElementById('btn-restart').addEventListener('click', () => { togglePause(false); resetCityWorld(); });
+    document.getElementById('btn-retry').addEventListener('click', retryFromWasted);
     document.getElementById('btn-mission').addEventListener('click', () => { sound.unlock(); toggleMission(); canvas.focus(); });
     document.getElementById('btn-radio').addEventListener('click', () => { sound.unlock(); cycleRadio(); canvas.focus(); });
-    document.getElementById('btn-weapon').addEventListener('click', () => { sound.unlock(); selectWeapon((state.player.weaponIdx + 1) % WEAPONS.length); canvas.focus(); });
-    document.getElementById('hud-weapon-box').addEventListener('click', () => { sound.unlock(); selectWeapon((state.player.weaponIdx + 1) % WEAPONS.length); canvas.focus(); });
+    document.getElementById('btn-weapon').addEventListener('click', () => { sound.unlock(); cycleWeapon(); canvas.focus(); });
+    document.getElementById('hud-weapon-box').addEventListener('click', () => { sound.unlock(); cycleWeapon(); canvas.focus(); });
     document.getElementById('btn-reload').addEventListener('click', () => { sound.unlock(); triggerReload(); canvas.focus(); });
     document.getElementById('context-prompt').addEventListener('click', () => { sound.unlock(); tryEnterOrExitCar(); canvas.focus(); });
 
-    document.getElementById('buy-armor').addEventListener('click', () => { if (saveData.cash >= 250) { saveData.cash -= 250; saveData.armorLevel = Math.min(4, saveData.armorLevel + 1); state.player.maxArmor = 50 + saveData.armorLevel * 25; state.player.armor = state.player.maxArmor; persistSave(); togglePause(true); } });
-    document.getElementById('buy-weapon').addEventListener('click', () => { if (saveData.cash >= 600 && saveData.weaponLevel < 4) { saveData.cash -= 600; saveData.weaponLevel++; persistSave(); togglePause(true); } });
-    document.getElementById('buy-tune').addEventListener('click', () => { if (saveData.cash >= 700 && saveData.tuneLevel < 4) { saveData.cash -= 700; saveData.tuneLevel++; persistSave(); togglePause(true); } });
-    document.getElementById('opt-mute').addEventListener('click', () => { saveData.muted = !saveData.muted; sound.setMuted(saveData.muted); persistSave(); togglePause(true); });
-    document.getElementById('opt-rain').addEventListener('click', () => { saveData.rain = !saveData.rain; persistSave(); togglePause(true); });
-    document.getElementById('opt-time').addEventListener('click', () => { state.timeOfDay = (state.timeOfDay + 0.3) % 1; updateHUD(); });
-    document.getElementById('opt-touch').addEventListener('click', () => { saveData.touchMode = saveData.touchMode === 'auto' ? 'on' : saveData.touchMode === 'on' ? 'off' : 'auto'; persistSave(); detectTouchUI(); togglePause(true); });
+    document.getElementById('buy-armor').addEventListener('click', () => {
+      if (saveData.cash < 250) return;
+      saveData.cash -= 250;
+      saveData.armorLevel = Math.min(4, saveData.armorLevel + 1);
+      state.player.maxArmor = 50 + saveData.armorLevel * 25;
+      state.player.armor = state.player.maxArmor;
+      persistSave(); sound.playPickup(); refreshPauseModal(); updateHUD();
+    });
+    document.getElementById('buy-weapon').addEventListener('click', () => {
+      if (saveData.cash < 600 || saveData.weaponLevel >= 4) return;
+      saveData.cash -= 600;
+      saveData.weaponLevel += 1;
+      persistSave(); sound.playPickup(); refreshPauseModal();
+    });
+    document.getElementById('buy-tune').addEventListener('click', () => {
+      if (saveData.cash < 700 || saveData.tuneLevel >= 4) return;
+      saveData.cash -= 700;
+      saveData.tuneLevel += 1;
+      persistSave(); sound.playPickup(); refreshPauseModal();
+    });
+    document.getElementById('buy-heal').addEventListener('click', () => {
+      if (saveData.cash < 150) return;
+      saveData.cash -= 150;
+      state.player.hp = state.player.maxHp;
+      persistSave(); sound.playPickup(); refreshPauseModal(); updateHUD();
+    });
+
+    document.getElementById('opt-mute').addEventListener('click', () => {
+      saveData.muted = !saveData.muted;
+      sound.setMuted(saveData.muted);
+      persistSave(); refreshPauseModal();
+    });
+    document.getElementById('opt-rain').addEventListener('click', () => {
+      saveData.rain = !saveData.rain;
+      persistSave(); refreshPauseModal(); updateHUD();
+    });
+    document.getElementById('opt-time').addEventListener('click', () => {
+      state.timeOfDay = (state.timeOfDay + 0.25) % 1;
+      updateHUD();
+    });
+    document.getElementById('opt-touch').addEventListener('click', () => {
+      saveData.touchMode = saveData.touchMode === 'auto' ? 'on' : saveData.touchMode === 'on' ? 'off' : 'auto';
+      persistSave(); detectTouchUI(); refreshPauseModal();
+    });
 
     document.getElementById('start-cash').textContent = `$${saveData.cash.toLocaleString()}`;
     document.getElementById('start-missions').textContent = `${saveData.missionsCleared}`;
-    resetWorld();
+    resetCityWorld();
     detectTouchUI();
 
-    let last = performance.now();
-    function loop(now) {
-      const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
-      last = now;
+    let lastTime = performance.now();
+    function gameLoop(now) {
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
+      lastTime = now;
+
       if (state.screen === 'start') {
-        state.cam.x = 4200 + Math.cos(now * 0.00025) * 420;
-        state.cam.y = 2500 + Math.sin(now * 0.00025) * 420;
+        state.timeOfDay = (state.timeOfDay + dt * 0.006) % 1;
+        state.cam.x = LAND_OFFSET + 6.5 * BLOCK_SIZE + Math.cos(now * 0.00018) * 520;
+        state.cam.y = LAND_OFFSET + 6.5 * BLOCK_SIZE + Math.sin(now * 0.00018) * 520;
       } else if (state.screen === 'playing' && !state.paused) {
         stepSimulation(dt);
         updateHUD();
         renderRadar();
       }
+
       renderWorld();
-      requestAnimationFrame(loop);
+      requestAnimationFrame(gameLoop);
     }
-    requestAnimationFrame(loop);
+
+    requestAnimationFrame(gameLoop);
   })();
   </script>
 </body>
